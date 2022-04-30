@@ -1,4 +1,4 @@
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 
 interface SudokuContainerProps {
   paddingHorizontal: number;
@@ -7,6 +7,7 @@ interface SudokuContainerProps {
 interface SudokuCellProps {
   size: number;
   isSelected: boolean;
+  isHovered: boolean;
 }
 
 interface NumberPadKeyPorps {
@@ -33,9 +34,21 @@ export const SudokuContainer = styled.View<SudokuContainerProps>`
 export const SudokuCell = styled.TouchableOpacity<SudokuCellProps>`
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
-  background-color: ${({ isSelected }) => (isSelected ? 'lightblue' : 'white')};
+  background-color: white;
   border-width: 1px;
   border-color: rgba(0, 0, 0, 0.1);
+
+  ${({ isHovered }) =>
+    isHovered &&
+    css`
+      background-color: lightgreen;
+    `}
+
+  ${({ isSelected }) =>
+    isSelected &&
+    css`
+      background-color: lightblue;
+    `}
 
   justify-content: center;
   align-items: center;
