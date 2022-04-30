@@ -3,7 +3,9 @@
 /* eslint-disable no-param-reassign */
 import CONSTANTS from '../utils/constants';
 
-interface Cell {
+export type SudokuGrid = number[][];
+
+export interface SudokuCell {
   row: number;
   col: number;
 }
@@ -23,7 +25,7 @@ const newGrid = (size: number) => {
 };
 
 // check duplicate number in col
-const isColSafe = (grid: number[][], col: number, value: number) => {
+const isColSafe = (grid: SudokuGrid, col: number, value: number) => {
   for (let row = 0; row < CONSTANTS.GRID_SIZE; row += 1) {
     if (grid[row][col] === value) return false;
   }
@@ -31,7 +33,7 @@ const isColSafe = (grid: number[][], col: number, value: number) => {
 };
 
 // check duplicate number in row
-const isRowSafe = (grid: number[][], row: number, value: number) => {
+const isRowSafe = (grid: SudokuGrid, row: number, value: number) => {
   for (let col = 0; col < CONSTANTS.GRID_SIZE; col += 1) {
     if (grid[row][col] === value) return false;
   }
@@ -39,7 +41,7 @@ const isRowSafe = (grid: number[][], row: number, value: number) => {
 };
 
 // check duplicate number in 3x3 box
-const isBoxSafe = (grid: number[][], boxRow: number, boxCol: number, value: number) => {
+const isBoxSafe = (grid: SudokuGrid, boxRow: number, boxCol: number, value: number) => {
   for (let row = 0; row < CONSTANTS.BOX_SIZE; row += 1) {
     for (let col = 0; col < CONSTANTS.BOX_SIZE; col += 1) {
       if (grid[row + boxRow][col + boxCol] === value) return false;
@@ -49,7 +51,7 @@ const isBoxSafe = (grid: number[][], boxRow: number, boxCol: number, value: numb
 };
 
 // check in row, col and 3x3 box
-const isSafe = (grid: number[][], row: number, col: number, value: number) => {
+const isSafe = (grid: SudokuGrid, row: number, col: number, value: number) => {
   return (
     isColSafe(grid, col, value) &&
     isRowSafe(grid, row, value) &&
@@ -59,7 +61,7 @@ const isSafe = (grid: number[][], row: number, col: number, value: number) => {
 };
 
 // find unassigned cell
-const findUnassignedPos = (grid: number[][], pos: Cell) => {
+const findUnassignedPos = (grid: SudokuGrid, pos: SudokuCell) => {
   for (let row = 0; row < CONSTANTS.GRID_SIZE; row += 1) {
     for (let col = 0; col < CONSTANTS.GRID_SIZE; col += 1) {
       if (grid[row][col] === CONSTANTS.UNASSIGNED) {
@@ -89,7 +91,7 @@ const shuffleArray = (arr: number[]) => {
 };
 
 // check puzzle is complete
-const isFullGrid = (grid: number[][]) => {
+const isFullGrid = (grid: SudokuGrid) => {
   return grid.every((row, i) => {
     return row.every((value, j) => {
       return value !== CONSTANTS.UNASSIGNED;
@@ -97,7 +99,7 @@ const isFullGrid = (grid: number[][]) => {
   });
 };
 
-const sudokuCreate = (grid: number[][]) => {
+const sudokuCreate = (grid: SudokuGrid) => {
   const unassignedPos = {
     row: -1,
     col: -1,
@@ -128,7 +130,7 @@ const sudokuCreate = (grid: number[][]) => {
   return isFullGrid(grid);
 };
 
-const sudokuCheck = (grid: number[][]) => {
+const sudokuCheck = (grid: SudokuGrid) => {
   const unassignedPos = {
     row: -1,
     col: -1,
@@ -154,7 +156,7 @@ const sudokuCheck = (grid: number[][]) => {
 
 const rand = () => Math.floor(Math.random() * CONSTANTS.GRID_SIZE);
 
-const removeCells = (grid: number[][], level: number) => {
+const removeCells = (grid: SudokuGrid, level: number) => {
   const res = [...grid];
   let attemps = level;
   while (attemps > 0) {
