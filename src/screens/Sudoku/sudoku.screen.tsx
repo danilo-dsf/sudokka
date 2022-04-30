@@ -4,7 +4,7 @@ import uuid from 'react-native-uuid';
 
 import CONSTANTS from '../../utils/constants';
 
-import { sudokuGen } from '../../services/sudoku.service.js';
+import { sudokuGen } from '../../services/sudoku.service';
 
 import * as S from './sudoku.styles';
 
