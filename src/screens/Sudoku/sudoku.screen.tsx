@@ -119,6 +119,8 @@ export const SudokuScreen: React.FC = () => {
       newSudoku[selectedCell.row][selectedCell.col] = 0;
       return newSudoku;
     });
+
+    setErroredCells([]);
   };
 
   const generateMatriz = useCallback(() => {
