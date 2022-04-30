@@ -4,14 +4,9 @@ import uuid from 'react-native-uuid';
 
 import CONSTANTS from '../../utils/constants';
 
-import { sudokuGen } from '../../services/sudoku.service.js';
+import { sudokuGen, SudokuCell, SudokuGrid } from '../../services/sudoku.service';
 
 import * as S from './sudoku.styles';
-
-interface SudokuCell {
-  row: number;
-  col: number;
-}
 
 const numberPadKeys = [...CONSTANTS.NUMBERS, 'X'];
 
@@ -20,7 +15,7 @@ export const SudokuScreen: React.FC = () => {
   const deviceScreenWidthTenth = deviceScreenWidth * 0.1;
   const numberPadKeySize = deviceScreenWidth * 0.175;
 
-  const [sudoku, setSudoku] = useState<number[][]>([]);
+  const [sudoku, setSudoku] = useState<SudokuGrid>([]);
   const [selectedCell, setSelectedCell] = useState<SudokuCell>();
   const [hoveredQuadrant, setHoveredQuadrant] = useState<SudokuCell[]>([]);
   const [erroredCells, setErroredCells] = useState<SudokuCell[]>([]);
@@ -89,6 +84,10 @@ export const SudokuScreen: React.FC = () => {
 
   const handleInsertNumber = (number: number) => {
     if (!selectedCell?.row && !selectedCell?.col) {
+      return;
+    }
+
+    if (number === sudoku[selectedCell.row][selectedCell.col]) {
       return;
     }
 
