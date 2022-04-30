@@ -92,6 +92,10 @@ export const SudokuScreen: React.FC = () => {
       return;
     }
 
+    if (number === sudoku[selectedCell.row][selectedCell.col]) {
+      return;
+    }
+
     setSudoku((prevState) => {
       const newSudoku = [...prevState];
       newSudoku[selectedCell.row][selectedCell.col] = number;
