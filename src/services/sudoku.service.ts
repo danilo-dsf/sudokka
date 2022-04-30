@@ -10,6 +10,11 @@ export interface SudokuCell {
   col: number;
 }
 
+interface SudokuLevel {
+  label: string;
+  cellsToFill: number;
+}
+
 const newGrid = (size: number) => {
   const arr = new Array(size);
 
@@ -173,11 +178,11 @@ const removeCells = (grid: SudokuGrid, level: number) => {
 };
 
 // generate sudoku base on level
-export const sudokuGen = (level: number) => {
+export const sudokuGen = (level: SudokuLevel) => {
   const sudoku = newGrid(CONSTANTS.GRID_SIZE);
   const check = sudokuCreate(sudoku);
   if (check) {
-    const question = removeCells(sudoku, level);
+    const question = removeCells(sudoku, level.cellsToFill);
     return {
       original: sudoku,
       question,

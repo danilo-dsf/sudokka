@@ -3,6 +3,30 @@ export default {
   GRID_SIZE: 9,
   BOX_SIZE: 3,
   NUMBERS: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-  LEVEL_NAME: ['Easy', 'Medium', 'Hard', 'Very hard', 'Insane', 'Inhuman'],
-  LEVEL: [29, 38, 47, 56, 65, 74],
+  LEVELS: {
+    EASY: {
+      label: 'Fácil',
+      cellsToFill: 29,
+    },
+    MEDIUM: {
+      label: 'Médio',
+      cellsToFill: 38,
+    },
+    HARD: {
+      label: 'Difícil',
+      cellsToFill: 47,
+    },
+    VERY_HARD: {
+      label: 'Muito Difícil',
+      cellsToFill: 56,
+    },
+    INSANE: {
+      label: 'Insano',
+      cellsToFill: 65,
+    },
+    INHUMAN: {
+      label: 'Inumano',
+      cellsToFill: 74,
+    },
+  },
 };

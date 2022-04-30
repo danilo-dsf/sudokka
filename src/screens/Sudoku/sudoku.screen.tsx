@@ -123,7 +123,7 @@ export const SudokuScreen: React.FC = () => {
   };
 
   const generateMatriz = useCallback(() => {
-    const obj = sudokuGen(29);
+    const obj = sudokuGen(CONSTANTS.LEVELS.EASY);
 
     if (!obj?.question) {
       return;
