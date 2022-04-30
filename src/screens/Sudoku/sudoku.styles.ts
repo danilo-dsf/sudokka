@@ -8,6 +8,11 @@ interface SudokuCellProps {
   size: number;
   isSelected: boolean;
   isHovered: boolean;
+  isErrored: boolean;
+}
+
+interface SudokuCellTextProps {
+  isErrored: boolean;
 }
 
 interface NumberPadKeyPorps {
@@ -44,6 +49,12 @@ export const SudokuCell = styled.TouchableOpacity<SudokuCellProps>`
       background-color: lightgreen;
     `}
 
+  ${({ isErrored }) =>
+    isErrored &&
+    css`
+      background-color: lightcoral;
+    `}
+
   ${({ isSelected }) =>
     isSelected &&
     css`
@@ -54,8 +65,15 @@ export const SudokuCell = styled.TouchableOpacity<SudokuCellProps>`
   align-items: center;
 `;
 
-export const SudokuCellText = styled.Text`
+export const SudokuCellText = styled.Text<SudokuCellTextProps>`
   font-size: 16px;
+
+  ${({ isErrored }) =>
+    isErrored &&
+    css`
+      color: red;
+      font-weight: bold;
+    `}
 `;
 
 export const NumberPad = styled.View`
