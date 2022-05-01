@@ -14,6 +14,7 @@ import {
 import theme from './src/global/styles/theme.styles';
 
 import { SudokuScreen } from './src/screens/Sudoku/sudoku.screen';
+import { HomeScreen } from './src/screens/Home/home.screen';
 
 const App = () => {
   const [fontsLoaded] = useFonts({
@@ -36,7 +37,7 @@ const App = () => {
           translucent
         />
 
-        <SudokuScreen />
+        <HomeScreen />
       </ThemeProvider>
     </SafeAreaProvider>
   );
