@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from 'styled-components';
 
+import { SudokuLevelName } from '../../services/sudoku.service';
+
 import CONSTANTS from '../../utils/constants';
 
 import { Button } from '../../components/Button/button.component';
@@ -10,14 +12,12 @@ import boxShadowStyles from '../../global/styles/box-shadow.styles';
 
 import * as S from './home.styles';
 
-type Level = 'EASY' | 'MEDIUM' | 'HARD' | 'VERY_HARD' | 'INSANE' | 'INHUMAN';
-
 export const HomeScreen: React.FC = () => {
   const theme = useTheme();
 
-  const [selectedLevel, setSelectedLevel] = useState<Level>('EASY');
+  const [selectedLevel, setSelectedLevel] = useState<SudokuLevelName>('EASY');
 
-  const handleSelectLevel = (level: Level) => {
+  const handleSelectLevel = (level: SudokuLevelName) => {
     setSelectedLevel(level);
   };
 
@@ -31,7 +31,7 @@ export const HomeScreen: React.FC = () => {
         <S.Subtitle>Selecione o nível de dificuldade e clique no botão abaixo para começar um novo jogo.</S.Subtitle>
 
         <S.LevelSelectContainer>
-          {(Object.keys(CONSTANTS.LEVELS) as Level[]).map((level) => (
+          {(Object.keys(CONSTANTS.LEVELS) as SudokuLevelName[]).map((level) => (
             <S.LevelWrapper
               key={level}
               isSelected={selectedLevel === level}
