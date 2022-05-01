@@ -1,12 +1,7 @@
 import styled from 'styled-components/native';
-import { RFValue } from 'react-native-responsive-fontsize';
 
 interface SudokuContainerProps {
   padding: number;
-}
-
-interface NumberPadKeyPorps {
-  size: number;
 }
 
 export const Container = styled.View`
@@ -23,29 +18,13 @@ export const SudokuContainer = styled.View<SudokuContainerProps>`
 
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
 `;
 
 export const NumberPad = styled.View`
   width: 100%;
-  margin-top: 40px;
+  margin-top: 24px;
 
-  justify-content: center;
+  justify-content: space-evenly;
   flex-direction: row;
   flex-wrap: wrap;
-`;
-
-export const NumberPadKey = styled.TouchableOpacity<NumberPadKeyPorps>`
-  width: ${({ size }) => size}px;
-  height: ${({ size }) => size}px;
-  background-color: white;
-  border-width: 1px;
-  border-color: rgba(0, 0, 0, 0.1);
-
-  justify-content: center;
-  align-items: center;
-`;
-
-export const NumberPadKeyText = styled.Text`
-  font-size: ${RFValue(20)}px;
 `;

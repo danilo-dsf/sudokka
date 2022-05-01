@@ -47,33 +47,34 @@ export const SudokuCell = styled.TouchableOpacity<SudokuCellProps>`
 
 export const SudokuCellText = styled.Text<SudokuCellTextProps>`
   font-size: ${RFValue(18)}px;
+  font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.text};
 
   ${({ isHovered, theme }) =>
     isHovered &&
     css`
       color: ${darken(0.5, theme.colors.cellHover)};
-      font-weight: bold;
+      font-family: ${theme.fonts.bold};
     `}
 
   ${({ isEdited, theme }) =>
     isEdited &&
     css`
       color: ${darken(0.25, theme.colors.info)};
-      font-weight: bold;
+      font-family: ${theme.fonts.bold};
     `}
 
   ${({ isErrored, theme }) =>
     isErrored &&
     css`
       color: ${darken(0.5, theme.colors.error)};
-      font-weight: bold;
+      font-family: ${theme.fonts.bold};
     `}
 
   ${({ isSelected, theme }) =>
     isSelected &&
     css`
       color: ${darken(0.5, theme.colors.info)};
-      font-weight: bold;
+      font-family: ${theme.fonts.bold};
     `}
 `;

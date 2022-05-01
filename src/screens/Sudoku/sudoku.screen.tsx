@@ -10,6 +10,7 @@ import { sudokuGen } from '../../services/sudoku.service.js';
 import { SudokuCell } from '../../components/SudokuCell/sudoku-cell.component';
 
 import * as S from './sudoku.styles';
+import NumberPadKey from '../../components/NumberPadKey/number-pad-key.component';
 
 interface SudokuCell {
   row: number;
@@ -130,7 +131,7 @@ export const SudokuScreen: React.FC = () => {
     setErroredCells([]);
   };
 
-  const generateSudokuGrid = useCallback(() => {
+  const generateSudoku = useCallback(() => {
     const obj = sudokuGen(29);
 
     if (!obj?.question) {
@@ -142,8 +143,8 @@ export const SudokuScreen: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    generateSudokuGrid();
-  }, [generateSudokuGrid]);
+    generateSudoku();
+  }, [generateSudoku]);
 
   return (
     <S.Container>
@@ -171,14 +172,13 @@ export const SudokuScreen: React.FC = () => {
 
       <S.NumberPad>
         {numberPadKeys.map((numberPadKey) => (
-          <S.NumberPadKey
+          <NumberPadKey
             key={String(uuid.v4())}
+            label={numberPadKey}
             size={numberPadKeySize}
             disabled={!selectedCell?.row && !selectedCell?.col}
-            onPress={typeof numberPadKey !== 'string' ? () => handleInsertNumber(numberPadKey) : handleClearCell}
-          >
-            <S.NumberPadKeyText>{numberPadKey}</S.NumberPadKeyText>
-          </S.NumberPadKey>
+            onPress={numberPadKey !== 'X' ? () => handleInsertNumber(Number(numberPadKey)) : handleClearCell}
+          />
         ))}
       </S.NumberPad>
     </S.Container>
