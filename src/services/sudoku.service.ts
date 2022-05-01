@@ -135,7 +135,7 @@ const sudokuCreate = (grid: SudokuGrid) => {
   return isFullGrid(grid);
 };
 
-const sudokuCheck = (grid: SudokuGrid) => {
+export const sudokuCheck = (grid: SudokuGrid) => {
   const unassignedPos = {
     row: -1,
     col: -1,

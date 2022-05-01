@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useWindowDimensions } from 'react-native';
+import { Text, useWindowDimensions } from 'react-native';
 import uuid from 'react-native-uuid';
 
 import CONSTANTS from '../../utils/constants';
 
-import { sudokuGen, SudokuCell, SudokuGrid } from '../../services/sudoku.service';
+import { sudokuGen, sudokuCheck, SudokuCell, SudokuGrid } from '../../services/sudoku.service';
 
 import * as S from './sudoku.styles';
 
@@ -19,6 +19,7 @@ export const SudokuScreen: React.FC = () => {
   const [selectedCell, setSelectedCell] = useState<SudokuCell>();
   const [hoveredQuadrant, setHoveredQuadrant] = useState<SudokuCell[]>([]);
   const [erroredCells, setErroredCells] = useState<SudokuCell[]>([]);
+  const [isSudokuWon, setIsSudokuWon] = useState(false);
 
   const hoverQuadrantRowAndColumnBasedOnSelectedCell = (row: number, col: number) => {
     const boxStartRow = row - (row % 3);
@@ -122,7 +123,7 @@ export const SudokuScreen: React.FC = () => {
     setErroredCells([]);
   };
 
-  const generateMatriz = useCallback(() => {
+  const generateSudoku = useCallback(() => {
     const obj = sudokuGen(CONSTANTS.LEVELS.EASY);
 
     if (!obj?.question) {
@@ -134,8 +135,15 @@ export const SudokuScreen: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    generateMatriz();
-  }, [generateMatriz]);
+    generateSudoku();
+  }, [generateSudoku]);
+
+  useEffect(() => {
+    if (sudoku.length && !erroredCells.length) {
+      const isGameWin = sudokuCheck(sudoku);
+      setIsSudokuWon(isGameWin);
+    }
+  }, [erroredCells.length, sudoku]);
 
   return (
     <S.Container>
@@ -164,6 +172,8 @@ export const SudokuScreen: React.FC = () => {
           )),
         )}
       </S.SudokuContainer>
+
+      {isSudokuWon && <Text style={{ color: 'green', fontWeight: 'bold', marginTop: 32 }}>VOCÊ GANHOU!</Text>}
 
       <S.NumberPad>
         {numberPadKeys.map((numberPadKey) => (
