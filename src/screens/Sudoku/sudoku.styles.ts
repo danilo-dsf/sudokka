@@ -1,101 +1,83 @@
-import styled, { css } from 'styled-components/native';
+import styled from 'styled-components/native';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface SudokuContainerProps {
-  paddingHorizontal: number;
+  padding: number;
 }
 
-interface SudokuCellProps {
-  size: number;
-  isSelected: boolean;
-  isHovered: boolean;
-  isErrored: boolean;
+interface GameInfoContainerProps {
+  padding: number;
 }
 
-interface SudokuCellTextProps {
-  isErrored: boolean;
+interface GameInfoWrapperProps {
+  justifyContent?: string;
 }
 
-interface NumberPadKeyPorps {
-  size: number;
+interface GameInfoTextProps {
+  marginLeft?: number;
 }
 
-export const Container = styled.View`
+export const Container = styled(SafeAreaView)`
   flex: 1;
-  background-color: whitesmoke;
+  background-color: ${({ theme }) => theme.colors.background};
+`;
+
+export const TitleBar = styled.View`
+  width: 100%;
+  height: ${RFValue(56)}px;
+  background-color: ${({ theme }) => theme.colors.backgroundOffset};
+  padding: 0 ${RFValue(16)}px;
+  margin-bottom: ${RFValue(24)}px;
+
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const BackButton = styled.TouchableOpacity`
+  height: 100%;
 
   justify-content: center;
-  align-items: center;
+`;
+
+export const TitleBarLabel = styled.Text`
+  font-size: ${RFValue(18)}px;
+  font-family: ${({ theme }) => theme.fonts.bold};
+  color: ${({ theme }) => theme.colors.text};
+  margin-left: ${RFValue(16)}px;
 `;
 
 export const SudokuContainer = styled.View<SudokuContainerProps>`
-  width: 100%;
-  margin: 0px ${({ paddingHorizontal }) => paddingHorizontal}px;
+  padding: ${({ padding }) => padding}px;
 
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
-`;
-
-export const SudokuCell = styled.TouchableOpacity<SudokuCellProps>`
-  width: ${({ size }) => size}px;
-  height: ${({ size }) => size}px;
-  background-color: white;
-  border-width: 1px;
-  border-color: rgba(0, 0, 0, 0.1);
-
-  ${({ isHovered }) =>
-    isHovered &&
-    css`
-      background-color: lightgreen;
-    `}
-
-  ${({ isErrored }) =>
-    isErrored &&
-    css`
-      background-color: lightcoral;
-    `}
-
-  ${({ isSelected }) =>
-    isSelected &&
-    css`
-      background-color: lightblue;
-    `}
-
-  justify-content: center;
-  align-items: center;
-`;
-
-export const SudokuCellText = styled.Text<SudokuCellTextProps>`
-  font-size: 16px;
-
-  ${({ isErrored }) =>
-    isErrored &&
-    css`
-      color: red;
-      font-weight: bold;
-    `}
 `;
 
 export const NumberPad = styled.View`
   width: 100%;
-  margin-top: 40px;
 
-  justify-content: center;
   flex-direction: row;
   flex-wrap: wrap;
+  justify-content: space-evenly;
 `;
 
-export const NumberPadKey = styled.TouchableOpacity<NumberPadKeyPorps>`
-  width: ${({ size }) => size}px;
-  height: ${({ size }) => size}px;
-  background-color: white;
-  border-width: 1px;
-  border-color: rgba(0, 0, 0, 0.1);
+export const GameInfoContainer = styled.View<GameInfoContainerProps>`
+  width: 100%;
+  padding: ${({ padding }) => RFValue(padding || 0)}px;
+  flex-direction: row;
+`;
 
-  justify-content: center;
+export const GameInfoWrapper = styled.View<GameInfoWrapperProps>`
+  flex: 1;
+  flex-direction: row;
+  justify-content: ${({ justifyContent }) => justifyContent || 'flex-start'};
   align-items: center;
 `;
 
-export const NumberPadKeyText = styled.Text`
-  font-size: 20px;
+export const GameInfoText = styled.Text<GameInfoTextProps>`
+  font-size: ${RFValue(13)}px;
+  font-family: ${({ theme }) => theme.fonts.regular};
+  color: ${({ theme }) => theme.colors.textSecondary};
+  margin-left: ${({ marginLeft }) => RFValue(marginLeft || 0)}px;
 `;

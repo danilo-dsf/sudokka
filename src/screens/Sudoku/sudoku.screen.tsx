@@ -2,27 +2,37 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, AppStateStatus, Text, useWindowDimensions } from 'react-native';
 import { useTimer } from 'use-timer';
 import uuid from 'react-native-uuid';
+import { useTheme } from 'styled-components/native';
+import { Feather } from '@expo/vector-icons';
 
 import CONSTANTS from '../../utils/constants';
 
-import { sudokuGen, sudokuCheck, SudokuCell, SudokuGrid } from '../../services/sudoku.service';
+import { sudokuGen, sudokuCheck, SudokuCell as SudokuCellType, SudokuGrid } from '../../services/sudoku.service';
 
+import { SudokuCell } from '../../components/SudokuCell/sudoku-cell.component';
+import { NumberPadKey } from '../../components/NumberPadKey/number-pad-key.component';
+
+import boxShadowStyles from '../../global/styles/box-shadow.styles';
 import * as S from './sudoku.styles';
 import { formatDuration } from '../../utils/format-duration';
 
 const numberPadKeys = [...CONSTANTS.NUMBERS, 'X'];
 
 export const SudokuScreen: React.FC = () => {
+  const theme = useTheme();
+
   const { width: deviceScreenWidth } = useWindowDimensions();
-  const deviceScreenWidthTenth = deviceScreenWidth * 0.1;
+  const sudokuCellSize = Math.floor(deviceScreenWidth / 9);
+  const sudokuGridRemainingSpace = deviceScreenWidth - sudokuCellSize * 9;
   const numberPadKeySize = deviceScreenWidth * 0.175;
 
   const { time: durationInSeconds, start: startTimer, pause: pauseTimer, reset: resetTimer } = useTimer();
 
+  const [originalSudoku, setOriginalSudoku] = useState<SudokuGrid>([]);
   const [sudoku, setSudoku] = useState<SudokuGrid>([]);
-  const [selectedCell, setSelectedCell] = useState<SudokuCell>();
-  const [hoveredQuadrant, setHoveredQuadrant] = useState<SudokuCell[]>([]);
-  const [erroredCells, setErroredCells] = useState<SudokuCell[]>([]);
+  const [selectedCell, setSelectedCell] = useState<SudokuCellType>();
+  const [hoveredQuadrant, setHoveredQuadrant] = useState<SudokuCellType[]>([]);
+  const [erroredCells, setErroredCells] = useState<SudokuCellType[]>([]);
   const [isSudokuWon, setIsSudokuWon] = useState(false);
 
   const appState = useRef(AppState.currentState);
@@ -31,7 +41,7 @@ export const SudokuScreen: React.FC = () => {
     const boxStartRow = row - (row % 3);
     const boxStartCol = col - (col % 3);
 
-    const quadrant: SudokuCell[] = [];
+    const quadrant: SudokuCellType[] = [];
 
     for (let i = boxStartRow; i < boxStartRow + 3; i += 1) {
       for (let j = boxStartCol; j < boxStartCol + 3; j += 1) {
@@ -47,7 +57,7 @@ export const SudokuScreen: React.FC = () => {
     hoverQuadrantRowAndColumnBasedOnSelectedCell(row, col);
   };
 
-  const checkInsertErrorInsideQuadrant = (insertedNumber: number): SudokuCell[] => {
+  const checkInsertErrorInsideQuadrant = (insertedNumber: number): SudokuCellType[] => {
     if (!selectedCell?.row && !selectedCell?.col) {
       return [];
     }
@@ -57,12 +67,12 @@ export const SudokuScreen: React.FC = () => {
     return quadrantErrors;
   };
 
-  const checkInsertErrorInsideRow = (insertedNumber: number): SudokuCell[] => {
+  const checkInsertErrorInsideRow = (insertedNumber: number): SudokuCellType[] => {
     if (!selectedCell?.row && !selectedCell?.col) {
       return [];
     }
 
-    const rowErrors: SudokuCell[] = [];
+    const rowErrors: SudokuCellType[] = [];
 
     for (let i = 0; i < CONSTANTS.GRID_SIZE; i += 1) {
       if (sudoku[selectedCell.row][i] === insertedNumber) {
@@ -73,12 +83,12 @@ export const SudokuScreen: React.FC = () => {
     return rowErrors;
   };
 
-  const checkInsertErrorInsideCol = (insertedNumber: number): SudokuCell[] => {
+  const checkInsertErrorInsideCol = (insertedNumber: number): SudokuCellType[] => {
     if (!selectedCell?.row && !selectedCell?.col) {
       return [];
     }
 
-    const colErrors: SudokuCell[] = [];
+    const colErrors: SudokuCellType[] = [];
 
     for (let i = 0; i < CONSTANTS.GRID_SIZE; i += 1) {
       if (sudoku[i][selectedCell.col] === insertedNumber) {
@@ -130,14 +140,14 @@ export const SudokuScreen: React.FC = () => {
   };
 
   const generateSudoku = useCallback(() => {
-    const obj = sudokuGen(CONSTANTS.LEVELS.EASY);
+    const newSudoku = sudokuGen(CONSTANTS.LEVELS.EASY);
 
-    if (!obj?.question) {
+    if (!newSudoku?.question) {
       return;
     }
 
-    const generatedSudoku = obj.question;
-    setSudoku(generatedSudoku);
+    setSudoku(JSON.parse(JSON.stringify(newSudoku.question)));
+    setOriginalSudoku(JSON.parse(JSON.stringify(newSudoku.original)));
   }, []);
 
   useEffect(() => {
@@ -178,15 +188,34 @@ export const SudokuScreen: React.FC = () => {
 
   return (
     <S.Container>
-      <Text>{`Tempo: ${formatDuration(durationInSeconds)}`}</Text>
+      <S.TitleBar style={boxShadowStyles}>
+        <S.BackButton>
+          <Feather name="arrow-left" size={24} color={theme.colors.textSecondary} />
+        </S.BackButton>
 
-      <S.SudokuContainer paddingHorizontal={deviceScreenWidthTenth / 2}>
+        <S.TitleBarLabel>Sudokka</S.TitleBarLabel>
+      </S.TitleBar>
+
+      <S.GameInfoContainer padding={sudokuGridRemainingSpace / 2}>
+        <S.GameInfoWrapper>
+          <S.GameInfoText>Fácil</S.GameInfoText>
+        </S.GameInfoWrapper>
+
+        <S.GameInfoWrapper justifyContent="flex-end">
+          <Feather name="clock" size={14} color={theme.colors.textSecondary} />
+          <S.GameInfoText marginLeft={4}>{formatDuration(durationInSeconds)}</S.GameInfoText>
+        </S.GameInfoWrapper>
+      </S.GameInfoContainer>
+
+      <S.SudokuContainer padding={sudokuGridRemainingSpace / 2}>
         {sudoku.map((row, rowIndex) =>
           row.map((number, columnIndex) => (
-            <S.SudokuCell
+            <SudokuCell
               key={String(uuid.v4())}
-              size={deviceScreenWidthTenth}
-              disabled={!!number}
+              label={!number ? '' : number.toString()}
+              size={sudokuCellSize}
+              disabled={!!originalSudoku[rowIndex][columnIndex]}
+              isEdited={!originalSudoku[rowIndex][columnIndex]}
               isSelected={selectedCell?.row === rowIndex && selectedCell.col === columnIndex}
               isHovered={
                 hoveredQuadrant.some((cell) => cell.row === rowIndex && cell.col === columnIndex) ||
@@ -195,13 +224,7 @@ export const SudokuScreen: React.FC = () => {
               }
               isErrored={erroredCells.some((cell) => cell.row === rowIndex && cell.col === columnIndex)}
               onPress={() => handleSelectCell(rowIndex, columnIndex)}
-            >
-              <S.SudokuCellText
-                isErrored={erroredCells.some((cell) => cell.row === rowIndex && cell.col === columnIndex)}
-              >
-                {!number ? '' : number}
-              </S.SudokuCellText>
-            </S.SudokuCell>
+            />
           )),
         )}
       </S.SudokuContainer>
@@ -210,14 +233,13 @@ export const SudokuScreen: React.FC = () => {
 
       <S.NumberPad>
         {numberPadKeys.map((numberPadKey) => (
-          <S.NumberPadKey
+          <NumberPadKey
             key={String(uuid.v4())}
+            label={numberPadKey}
             size={numberPadKeySize}
             disabled={!selectedCell?.row && !selectedCell?.col}
-            onPress={typeof numberPadKey !== 'string' ? () => handleInsertNumber(numberPadKey) : handleClearCell}
-          >
-            <S.NumberPadKeyText>{numberPadKey}</S.NumberPadKeyText>
-          </S.NumberPadKey>
+            onPress={numberPadKey !== 'X' ? () => handleInsertNumber(Number(numberPadKey)) : handleClearCell}
+          />
         ))}
       </S.NumberPad>
     </S.Container>
