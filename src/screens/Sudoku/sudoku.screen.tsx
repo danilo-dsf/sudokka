@@ -1,23 +1,20 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useWindowDimensions } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { AppState, AppStateStatus, Text, useWindowDimensions } from 'react-native';
+import { useTimer } from 'use-timer';
 import uuid from 'react-native-uuid';
 import { useTheme } from 'styled-components/native';
 import { Feather } from '@expo/vector-icons';
 
 import CONSTANTS from '../../utils/constants';
 
-import { sudokuGen } from '../../services/sudoku.service.js';
+import { sudokuGen, sudokuCheck, SudokuCell as SudokuCellType, SudokuGrid } from '../../services/sudoku.service';
 
 import { SudokuCell } from '../../components/SudokuCell/sudoku-cell.component';
 import { NumberPadKey } from '../../components/NumberPadKey/number-pad-key.component';
 
 import boxShadowStyles from '../../global/styles/box-shadow.styles';
 import * as S from './sudoku.styles';
-
-interface SudokuCell {
-  row: number;
-  col: number;
-}
+import { formatDuration } from '../../utils/format-duration';
 
 const numberPadKeys = [...CONSTANTS.NUMBERS, 'X'];
 
@@ -29,17 +26,22 @@ export const SudokuScreen: React.FC = () => {
   const sudokuGridRemainingSpace = deviceScreenWidth - sudokuCellSize * 9;
   const numberPadKeySize = deviceScreenWidth * 0.175;
 
-  const [originalSudoku, setOriginalSudoku] = useState<number[][]>([]);
-  const [sudoku, setSudoku] = useState<number[][]>([]);
-  const [selectedCell, setSelectedCell] = useState<SudokuCell>();
-  const [hoveredQuadrant, setHoveredQuadrant] = useState<SudokuCell[]>([]);
-  const [erroredCells, setErroredCells] = useState<SudokuCell[]>([]);
+  const { time: durationInSeconds, start: startTimer, pause: pauseTimer, reset: resetTimer } = useTimer();
+
+  const [originalSudoku, setOriginalSudoku] = useState<SudokuGrid>([]);
+  const [sudoku, setSudoku] = useState<SudokuGrid>([]);
+  const [selectedCell, setSelectedCell] = useState<SudokuCellType>();
+  const [hoveredQuadrant, setHoveredQuadrant] = useState<SudokuCellType[]>([]);
+  const [erroredCells, setErroredCells] = useState<SudokuCellType[]>([]);
+  const [isSudokuWon, setIsSudokuWon] = useState(false);
+
+  const appState = useRef(AppState.currentState);
 
   const hoverQuadrantRowAndColumnBasedOnSelectedCell = (row: number, col: number) => {
     const boxStartRow = row - (row % 3);
     const boxStartCol = col - (col % 3);
 
-    const quadrant: SudokuCell[] = [];
+    const quadrant: SudokuCellType[] = [];
 
     for (let i = boxStartRow; i < boxStartRow + 3; i += 1) {
       for (let j = boxStartCol; j < boxStartCol + 3; j += 1) {
@@ -55,7 +57,7 @@ export const SudokuScreen: React.FC = () => {
     hoverQuadrantRowAndColumnBasedOnSelectedCell(row, col);
   };
 
-  const checkInsertErrorInsideQuadrant = (insertedNumber: number): SudokuCell[] => {
+  const checkInsertErrorInsideQuadrant = (insertedNumber: number): SudokuCellType[] => {
     if (!selectedCell?.row && !selectedCell?.col) {
       return [];
     }
@@ -65,12 +67,12 @@ export const SudokuScreen: React.FC = () => {
     return quadrantErrors;
   };
 
-  const checkInsertErrorInsideRow = (insertedNumber: number): SudokuCell[] => {
+  const checkInsertErrorInsideRow = (insertedNumber: number): SudokuCellType[] => {
     if (!selectedCell?.row && !selectedCell?.col) {
       return [];
     }
 
-    const rowErrors: SudokuCell[] = [];
+    const rowErrors: SudokuCellType[] = [];
 
     for (let i = 0; i < CONSTANTS.GRID_SIZE; i += 1) {
       if (sudoku[selectedCell.row][i] === insertedNumber) {
@@ -81,12 +83,12 @@ export const SudokuScreen: React.FC = () => {
     return rowErrors;
   };
 
-  const checkInsertErrorInsideCol = (insertedNumber: number): SudokuCell[] => {
+  const checkInsertErrorInsideCol = (insertedNumber: number): SudokuCellType[] => {
     if (!selectedCell?.row && !selectedCell?.col) {
       return [];
     }
 
-    const colErrors: SudokuCell[] = [];
+    const colErrors: SudokuCellType[] = [];
 
     for (let i = 0; i < CONSTANTS.GRID_SIZE; i += 1) {
       if (sudoku[i][selectedCell.col] === insertedNumber) {
@@ -99,6 +101,10 @@ export const SudokuScreen: React.FC = () => {
 
   const handleInsertNumber = (number: number) => {
     if (!selectedCell?.row && !selectedCell?.col) {
+      return;
+    }
+
+    if (number === sudoku[selectedCell.row][selectedCell.col]) {
       return;
     }
 
@@ -134,19 +140,51 @@ export const SudokuScreen: React.FC = () => {
   };
 
   const generateSudoku = useCallback(() => {
-    const obj = sudokuGen(29);
+    const newSudoku = sudokuGen(CONSTANTS.LEVELS.EASY);
 
-    if (!obj?.question) {
+    if (!newSudoku?.question) {
       return;
     }
 
-    setSudoku(JSON.parse(JSON.stringify(obj.question)));
-    setOriginalSudoku(JSON.parse(JSON.stringify(obj.original)));
+    setSudoku(JSON.parse(JSON.stringify(newSudoku.question)));
+    setOriginalSudoku(JSON.parse(JSON.stringify(newSudoku.original)));
   }, []);
 
   useEffect(() => {
     generateSudoku();
-  }, [generateSudoku]);
+    startTimer();
+  }, [generateSudoku, startTimer]);
+
+  useEffect(() => {
+    if (sudoku.length && !erroredCells.length) {
+      const isGameWin = sudokuCheck(sudoku);
+      setIsSudokuWon(isGameWin);
+
+      if (isGameWin) {
+        resetTimer();
+      }
+    }
+  }, [erroredCells.length, resetTimer, sudoku]);
+
+  useEffect(() => {
+    const pauseTimerIfInBackground = async (nextAppState: AppStateStatus) => {
+      if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+        // background para foreground
+        pauseTimer();
+      } else {
+        // foreground para background
+        startTimer();
+      }
+
+      appState.current = nextAppState;
+    };
+
+    AppState.addEventListener('change', pauseTimerIfInBackground);
+
+    return () => {
+      AppState.removeEventListener('change', pauseTimerIfInBackground);
+    };
+  }, [pauseTimer, startTimer]);
 
   return (
     <S.Container>
@@ -165,7 +203,7 @@ export const SudokuScreen: React.FC = () => {
 
         <S.GameInfoWrapper justifyContent="flex-end">
           <Feather name="clock" size={14} color={theme.colors.textSecondary} />
-          <S.GameInfoText marginLeft={4}>00:00</S.GameInfoText>
+          <S.GameInfoText marginLeft={4}>{formatDuration(durationInSeconds)}</S.GameInfoText>
         </S.GameInfoWrapper>
       </S.GameInfoContainer>
 
@@ -190,6 +228,8 @@ export const SudokuScreen: React.FC = () => {
           )),
         )}
       </S.SudokuContainer>
+
+      {isSudokuWon && <Text style={{ color: 'green', fontWeight: 'bold', marginTop: 32 }}>VOCÊ GANHOU!</Text>}
 
       <S.NumberPad>
         {numberPadKeys.map((numberPadKey) => (
