@@ -11,6 +11,7 @@ import { sudokuGen } from '../../services/sudoku.service.js';
 import { SudokuCell } from '../../components/SudokuCell/sudoku-cell.component';
 import { NumberPadKey } from '../../components/NumberPadKey/number-pad-key.component';
 
+import boxShadowStyles from '../../global/styles/box-shadow.styles';
 import * as S from './sudoku.styles';
 
 interface SudokuCell {
@@ -149,6 +150,14 @@ export const SudokuScreen: React.FC = () => {
 
   return (
     <S.Container>
+      <S.TitleBar style={boxShadowStyles}>
+        <S.BackButton>
+          <Feather name="arrow-left" size={24} color={theme.colors.textSecondary} />
+        </S.BackButton>
+
+        <S.TitleBarLabel>Sudokka</S.TitleBarLabel>
+      </S.TitleBar>
+
       <S.GameInfoContainer padding={sudokuGridRemainingSpace / 2}>
         <S.GameInfoWrapper>
           <S.GameInfoText>Fácil</S.GameInfoText>

@@ -1,5 +1,6 @@
-import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface SudokuContainerProps {
   padding: number;
@@ -17,12 +18,33 @@ interface GameInfoTextProps {
   marginLeft?: number;
 }
 
-export const Container = styled.View`
+export const Container = styled(SafeAreaView)`
   flex: 1;
   background-color: ${({ theme }) => theme.colors.background};
+`;
+
+export const TitleBar = styled.View`
+  width: 100%;
+  height: ${RFValue(56)}px;
+  background-color: ${({ theme }) => theme.colors.backgroundOffset};
+  padding: 0 ${RFValue(16)}px;
+  margin-bottom: ${RFValue(24)}px;
+
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const BackButton = styled.TouchableOpacity`
+  height: 100%;
 
   justify-content: center;
-  align-items: center;
+`;
+
+export const TitleBarLabel = styled.Text`
+  font-size: ${RFValue(18)}px;
+  font-family: ${({ theme }) => theme.fonts.bold};
+  color: ${({ theme }) => theme.colors.text};
+  margin-left: ${RFValue(16)}px;
 `;
 
 export const SudokuContainer = styled.View<SudokuContainerProps>`
@@ -34,7 +56,6 @@ export const SudokuContainer = styled.View<SudokuContainerProps>`
 
 export const NumberPad = styled.View`
   width: 100%;
-  margin-top: 24px;
 
   flex-direction: row;
   flex-wrap: wrap;

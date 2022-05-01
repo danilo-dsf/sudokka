@@ -1,5 +1,6 @@
 import React from 'react';
 import { StatusBar, StatusBarStyle } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components/native';
 import AppLoading from 'expo-app-loading';
 import {
@@ -27,15 +28,17 @@ const App = () => {
   }
 
   return (
-    <ThemeProvider theme={theme.creme}>
-      <StatusBar
-        style={theme.creme.statusBarStyle as StatusBarStyle}
-        backgroundColor={theme.creme.colors.background}
-        translucent
-      />
+    <SafeAreaProvider>
+      <ThemeProvider theme={theme.creme}>
+        <StatusBar
+          style={theme.creme.statusBarStyle as StatusBarStyle}
+          backgroundColor={theme.creme.colors.backgroundOffset}
+          translucent
+        />
 
-      <SudokuScreen />
-    </ThemeProvider>
+        <SudokuScreen />
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 };
 
