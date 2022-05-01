@@ -41,10 +41,17 @@ export const BackButton = styled.TouchableOpacity`
 `;
 
 export const TitleBarLabel = styled.Text`
+  flex: 1;
   font-size: ${RFValue(18)}px;
   font-family: ${({ theme }) => theme.fonts.bold};
   color: ${({ theme }) => theme.colors.text};
   margin-left: ${RFValue(16)}px;
+`;
+
+export const PauseButton = styled.TouchableOpacity`
+  height: 100%;
+
+  justify-content: center;
 `;
 
 export const SudokuContainer = styled.View<SudokuContainerProps>`

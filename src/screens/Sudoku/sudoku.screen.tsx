@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { AppState, AppStateStatus, Text, useWindowDimensions } from 'react-native';
+import { AppState, AppStateStatus, Text, useWindowDimensions, Modal } from 'react-native';
 import { useTimer } from 'use-timer';
 import uuid from 'react-native-uuid';
 import { useTheme } from 'styled-components/native';
@@ -15,6 +15,7 @@ import { NumberPadKey } from '../../components/NumberPadKey/number-pad-key.compo
 import boxShadowStyles from '../../global/styles/box-shadow.styles';
 import * as S from './sudoku.styles';
 import { formatDuration } from '../../utils/format-duration';
+import { PauseSudokuModal } from '../../modals/PauseSudoku/pause-sudoku.modal';
 
 const numberPadKeys = [...CONSTANTS.NUMBERS, 'X'];
 
@@ -34,6 +35,7 @@ export const SudokuScreen: React.FC = () => {
   const [hoveredQuadrant, setHoveredQuadrant] = useState<SudokuCellType[]>([]);
   const [erroredCells, setErroredCells] = useState<SudokuCellType[]>([]);
   const [isSudokuWon, setIsSudokuWon] = useState(false);
+  const [isSudokuPaused, setIsSudokuPaused] = useState(false);
 
   const appState = useRef(AppState.currentState);
 
@@ -150,6 +152,16 @@ export const SudokuScreen: React.FC = () => {
     setOriginalSudoku(JSON.parse(JSON.stringify(newSudoku.original)));
   }, []);
 
+  const handlePauseSudoku = () => {
+    setIsSudokuPaused(true);
+    pauseTimer();
+  };
+
+  const handleResumeSudoku = () => {
+    setIsSudokuPaused(false);
+    startTimer();
+  };
+
   useEffect(() => {
     generateSudoku();
     startTimer();
@@ -194,6 +206,10 @@ export const SudokuScreen: React.FC = () => {
         </S.BackButton>
 
         <S.TitleBarLabel>Sudokka</S.TitleBarLabel>
+
+        <S.PauseButton onPress={handlePauseSudoku}>
+          <Feather name="pause" size={24} color={theme.colors.textSecondary} />
+        </S.PauseButton>
       </S.TitleBar>
 
       <S.GameInfoContainer padding={sudokuGridRemainingSpace / 2}>
@@ -242,6 +258,10 @@ export const SudokuScreen: React.FC = () => {
           />
         ))}
       </S.NumberPad>
+
+      <Modal visible={isSudokuPaused} animationType="slide">
+        <PauseSudokuModal resumeSudokuCallback={handleResumeSudoku} gameDurationUntilNow={durationInSeconds} />
+      </Modal>
     </S.Container>
   );
 };
