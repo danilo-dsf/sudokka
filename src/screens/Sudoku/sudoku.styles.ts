@@ -1,18 +1,8 @@
-import styled, { css } from 'styled-components/native';
+import styled from 'styled-components/native';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 interface SudokuContainerProps {
-  paddingHorizontal: number;
-}
-
-interface SudokuCellProps {
-  size: number;
-  isSelected: boolean;
-  isHovered: boolean;
-  isErrored: boolean;
-}
-
-interface SudokuCellTextProps {
-  isErrored: boolean;
+  padding: number;
 }
 
 interface NumberPadKeyPorps {
@@ -21,59 +11,19 @@ interface NumberPadKeyPorps {
 
 export const Container = styled.View`
   flex: 1;
-  background-color: whitesmoke;
+  background-color: ${({ theme }) => theme.colors.background};
 
   justify-content: center;
   align-items: center;
 `;
 
 export const SudokuContainer = styled.View<SudokuContainerProps>`
-  width: 100%;
-  margin: 0px ${({ paddingHorizontal }) => paddingHorizontal}px;
+  padding: ${({ padding }) => padding}px;
+  background-color: ${({ theme }) => theme.colors.backgroundOffset};
 
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-`;
-
-export const SudokuCell = styled.TouchableOpacity<SudokuCellProps>`
-  width: ${({ size }) => size}px;
-  height: ${({ size }) => size}px;
-  background-color: white;
-  border-width: 1px;
-  border-color: rgba(0, 0, 0, 0.1);
-
-  ${({ isHovered }) =>
-    isHovered &&
-    css`
-      background-color: lightgreen;
-    `}
-
-  ${({ isErrored }) =>
-    isErrored &&
-    css`
-      background-color: lightcoral;
-    `}
-
-  ${({ isSelected }) =>
-    isSelected &&
-    css`
-      background-color: lightblue;
-    `}
-
-  justify-content: center;
-  align-items: center;
-`;
-
-export const SudokuCellText = styled.Text<SudokuCellTextProps>`
-  font-size: 16px;
-
-  ${({ isErrored }) =>
-    isErrored &&
-    css`
-      color: red;
-      font-weight: bold;
-    `}
 `;
 
 export const NumberPad = styled.View`
@@ -97,5 +47,5 @@ export const NumberPadKey = styled.TouchableOpacity<NumberPadKeyPorps>`
 `;
 
 export const NumberPadKeyText = styled.Text`
-  font-size: 20px;
+  font-size: ${RFValue(20)}px;
 `;
