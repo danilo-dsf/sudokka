@@ -1,13 +1,21 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { AppState, AppStateStatus, Text, useWindowDimensions } from 'react-native';
+import { Alert, AppState, AppStateStatus, Text, useWindowDimensions } from 'react-native';
 import { useTimer } from 'use-timer';
 import uuid from 'react-native-uuid';
 import { useTheme } from 'styled-components/native';
 import { Feather } from '@expo/vector-icons';
 
+import { SudokuScreenRouteProps } from '../../routes/app.routes';
+
 import CONSTANTS from '../../utils/constants';
 
-import { sudokuGen, sudokuCheck, SudokuCell as SudokuCellType, SudokuGrid } from '../../services/sudoku.service';
+import {
+  sudokuGen,
+  sudokuCheck,
+  SudokuCell as SudokuCellType,
+  SudokuGrid,
+  SudokuLevel,
+} from '../../services/sudoku.service';
 
 import { SudokuCell } from '../../components/SudokuCell/sudoku-cell.component';
 import { NumberPadKey } from '../../components/NumberPadKey/number-pad-key.component';
@@ -18,7 +26,7 @@ import { formatDuration } from '../../utils/format-duration';
 
 const numberPadKeys = [...CONSTANTS.NUMBERS, 'X'];
 
-export const SudokuScreen: React.FC = () => {
+export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, route }) => {
   const theme = useTheme();
 
   const { width: deviceScreenWidth } = useWindowDimensions();
@@ -139,8 +147,21 @@ export const SudokuScreen: React.FC = () => {
     setErroredCells([]);
   };
 
+  const handleGoBack = () => {
+    Alert.alert('Deseja mesmo sair?', 'Seu progresso será perdido.', [
+      { text: 'Não', style: 'cancel' },
+      {
+        text: 'Sair',
+        style: 'default',
+        onPress: () => {
+          navigation.goBack();
+        },
+      },
+    ]);
+  };
+
   const generateSudoku = useCallback(() => {
-    const newSudoku = sudokuGen(CONSTANTS.LEVELS.EASY);
+    const newSudoku = sudokuGen(CONSTANTS.LEVELS[route.params.sudokuLevelName] as SudokuLevel);
 
     if (!newSudoku?.question) {
       return;
@@ -148,7 +169,7 @@ export const SudokuScreen: React.FC = () => {
 
     setSudoku(JSON.parse(JSON.stringify(newSudoku.question)));
     setOriginalSudoku(JSON.parse(JSON.stringify(newSudoku.original)));
-  }, []);
+  }, [route.params.sudokuLevelName]);
 
   useEffect(() => {
     generateSudoku();
@@ -189,7 +210,7 @@ export const SudokuScreen: React.FC = () => {
   return (
     <S.Container>
       <S.TitleBar style={boxShadowStyles}>
-        <S.BackButton>
+        <S.BackButton onPress={handleGoBack}>
           <Feather name="arrow-left" size={24} color={theme.colors.textSecondary} />
         </S.BackButton>
 
@@ -198,7 +219,7 @@ export const SudokuScreen: React.FC = () => {
 
       <S.GameInfoContainer padding={sudokuGridRemainingSpace / 2}>
         <S.GameInfoWrapper>
-          <S.GameInfoText>Fácil</S.GameInfoText>
+          <S.GameInfoText>{CONSTANTS.LEVELS[route.params.sudokuLevelName].label}</S.GameInfoText>
         </S.GameInfoWrapper>
 
         <S.GameInfoWrapper justifyContent="flex-end">

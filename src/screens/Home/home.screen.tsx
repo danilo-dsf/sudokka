@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from 'styled-components';
 
+import { HomeScreenRouteProps } from '../../routes/app.routes';
+
 import { SudokuLevelName } from '../../services/sudoku.service';
 
 import CONSTANTS from '../../utils/constants';
@@ -12,13 +14,17 @@ import boxShadowStyles from '../../global/styles/box-shadow.styles';
 
 import * as S from './home.styles';
 
-export const HomeScreen: React.FC = () => {
+export const HomeScreen: React.FC<HomeScreenRouteProps> = ({ navigation }) => {
   const theme = useTheme();
 
   const [selectedLevel, setSelectedLevel] = useState<SudokuLevelName>('EASY');
 
   const handleSelectLevel = (level: SudokuLevelName) => {
     setSelectedLevel(level);
+  };
+
+  const handleInitializeSudokuGame = () => {
+    navigation.navigate('Sudoku', { sudokuLevelName: selectedLevel });
   };
 
   return (
@@ -45,7 +51,7 @@ export const HomeScreen: React.FC = () => {
           ))}
         </S.LevelSelectContainer>
 
-        <Button title="Começar" icon="play" />
+        <Button title="Começar" icon="play" onPress={handleInitializeSudokuGame} />
       </S.Container>
     </SafeAreaView>
   );

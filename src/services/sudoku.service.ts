@@ -12,7 +12,7 @@ export interface SudokuCell {
 
 export type SudokuLevelName = 'EASY' | 'MEDIUM' | 'HARD' | 'VERY_HARD' | 'INSANE' | 'INHUMAN';
 
-interface SudokuLevel {
+export interface SudokuLevel {
   label: SudokuLevelName;
   cellsToFill: number;
 }
