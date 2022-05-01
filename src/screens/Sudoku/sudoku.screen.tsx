@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Text, useWindowDimensions } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { AppState, AppStateStatus, Text, useWindowDimensions } from 'react-native';
+import { useTimer } from 'use-timer';
 import uuid from 'react-native-uuid';
 
 import CONSTANTS from '../../utils/constants';
@@ -7,6 +8,7 @@ import CONSTANTS from '../../utils/constants';
 import { sudokuGen, sudokuCheck, SudokuCell, SudokuGrid } from '../../services/sudoku.service';
 
 import * as S from './sudoku.styles';
+import { formatDuration } from '../../utils/format-duration';
 
 const numberPadKeys = [...CONSTANTS.NUMBERS, 'X'];
 
@@ -15,11 +17,15 @@ export const SudokuScreen: React.FC = () => {
   const deviceScreenWidthTenth = deviceScreenWidth * 0.1;
   const numberPadKeySize = deviceScreenWidth * 0.175;
 
+  const { time: durationInSeconds, start: startTimer, pause: pauseTimer, reset: resetTimer } = useTimer();
+
   const [sudoku, setSudoku] = useState<SudokuGrid>([]);
   const [selectedCell, setSelectedCell] = useState<SudokuCell>();
   const [hoveredQuadrant, setHoveredQuadrant] = useState<SudokuCell[]>([]);
   const [erroredCells, setErroredCells] = useState<SudokuCell[]>([]);
   const [isSudokuWon, setIsSudokuWon] = useState(false);
+
+  const appState = useRef(AppState.currentState);
 
   const hoverQuadrantRowAndColumnBasedOnSelectedCell = (row: number, col: number) => {
     const boxStartRow = row - (row % 3);
@@ -136,17 +142,44 @@ export const SudokuScreen: React.FC = () => {
 
   useEffect(() => {
     generateSudoku();
-  }, [generateSudoku]);
+    startTimer();
+  }, [generateSudoku, startTimer]);
 
   useEffect(() => {
     if (sudoku.length && !erroredCells.length) {
       const isGameWin = sudokuCheck(sudoku);
       setIsSudokuWon(isGameWin);
+
+      if (isGameWin) {
+        resetTimer();
+      }
     }
-  }, [erroredCells.length, sudoku]);
+  }, [erroredCells.length, resetTimer, sudoku]);
+
+  useEffect(() => {
+    const pauseTimerIfInBackground = async (nextAppState: AppStateStatus) => {
+      if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+        // background para foreground
+        pauseTimer();
+      } else {
+        // foreground para background
+        startTimer();
+      }
+
+      appState.current = nextAppState;
+    };
+
+    AppState.addEventListener('change', pauseTimerIfInBackground);
+
+    return () => {
+      AppState.removeEventListener('change', pauseTimerIfInBackground);
+    };
+  }, [pauseTimer, startTimer]);
 
   return (
     <S.Container>
+      <Text>{`Tempo: ${formatDuration(durationInSeconds)}`}</Text>
+
       <S.SudokuContainer paddingHorizontal={deviceScreenWidthTenth / 2}>
         {sudoku.map((row, rowIndex) =>
           row.map((number, columnIndex) => (
