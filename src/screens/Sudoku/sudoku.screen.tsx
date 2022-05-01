@@ -2,15 +2,16 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import uuid from 'react-native-uuid';
 import { useTheme } from 'styled-components/native';
+import { Feather } from '@expo/vector-icons';
 
 import CONSTANTS from '../../utils/constants';
 
 import { sudokuGen } from '../../services/sudoku.service.js';
 
 import { SudokuCell } from '../../components/SudokuCell/sudoku-cell.component';
+import { NumberPadKey } from '../../components/NumberPadKey/number-pad-key.component';
 
 import * as S from './sudoku.styles';
-import NumberPadKey from '../../components/NumberPadKey/number-pad-key.component';
 
 interface SudokuCell {
   row: number;
@@ -148,7 +149,18 @@ export const SudokuScreen: React.FC = () => {
 
   return (
     <S.Container>
-      <S.SudokuContainer padding={sudokuGridRemainingSpace / 2} style={theme.boxShadow}>
+      <S.GameInfoContainer padding={sudokuGridRemainingSpace / 2}>
+        <S.GameInfoWrapper>
+          <S.GameInfoText>Fácil</S.GameInfoText>
+        </S.GameInfoWrapper>
+
+        <S.GameInfoWrapper justifyContent="flex-end">
+          <Feather name="clock" size={14} color={theme.colors.textSecondary} />
+          <S.GameInfoText marginLeft={4}>00:00</S.GameInfoText>
+        </S.GameInfoWrapper>
+      </S.GameInfoContainer>
+
+      <S.SudokuContainer padding={sudokuGridRemainingSpace / 2}>
         {sudoku.map((row, rowIndex) =>
           row.map((number, columnIndex) => (
             <SudokuCell

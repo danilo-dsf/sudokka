@@ -13,7 +13,7 @@ interface NumberPadKeyProps extends TouchableOpacityProps {
   size: number;
 }
 
-const NumberPadKey: React.FC<NumberPadKeyProps> = ({ label, disabled, ...rest }) => {
+export const NumberPadKey: React.FC<NumberPadKeyProps> = ({ label, disabled, ...rest }) => {
   const theme = useTheme();
 
   return (
@@ -31,5 +31,3 @@ const NumberPadKey: React.FC<NumberPadKeyProps> = ({ label, disabled, ...rest })
     </S.NumberPadKey>
   );
 };
-
-export default NumberPadKey;
