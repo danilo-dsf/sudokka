@@ -18,6 +18,24 @@ export const Container = styled(LinearGradient)`
   align-items: center;
 `;
 
+export const TitleBar = styled.View`
+  width: 100%;
+  height: ${RFValue(56)}px;
+
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+
+  position: absolute;
+  top: 0;
+`;
+
+export const PopUpMenuButton = styled.TouchableOpacity`
+  height: 100%;
+
+  justify-content: center;
+`;
+
 export const LogoImage = styled.Image.attrs({
   source: logoImg,
   resizeMode: 'contain',

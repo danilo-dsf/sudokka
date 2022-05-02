@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from 'styled-components';
+import { Menu, MenuItem } from 'react-native-material-menu';
+import { Feather } from '@expo/vector-icons';
 
 import { HomeScreenRouteProps } from '../../routes/app.routes';
 
@@ -18,6 +20,7 @@ export const HomeScreen: React.FC<HomeScreenRouteProps> = ({ navigation }) => {
   const theme = useTheme();
 
   const [selectedLevel, setSelectedLevel] = useState<SudokuLevelName>('EASY');
+  const [showPopUpMenu, setShowPopUpMenu] = useState(false);
 
   const handleSelectLevel = (level: SudokuLevelName) => {
     setSelectedLevel(level);
@@ -27,9 +30,32 @@ export const HomeScreen: React.FC<HomeScreenRouteProps> = ({ navigation }) => {
     navigation.navigate('Sudoku', { sudokuLevelName: selectedLevel });
   };
 
+  const handleTogglePopUpMenu = () => {
+    setShowPopUpMenu((prevState) => !prevState);
+  };
+
+  const handleNavigateToRulesScreen = () => {
+    handleTogglePopUpMenu();
+    navigation.navigate('Rules');
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <S.Container start={{ x: 0.1, y: 0.2 }} colors={[theme.colors.backgroundOffset, theme.colors.background]}>
+        <S.TitleBar>
+          <Menu
+            visible={showPopUpMenu}
+            anchor={
+              <S.PopUpMenuButton onPress={handleTogglePopUpMenu}>
+                <Feather name="more-vertical" size={24} color={theme.colors.textSecondary} />
+              </S.PopUpMenuButton>
+            }
+            onRequestClose={handleTogglePopUpMenu}
+          >
+            <MenuItem onPress={handleNavigateToRulesScreen}>Regras do Sudoku</MenuItem>
+          </Menu>
+        </S.TitleBar>
+
         <S.LogoImage />
 
         <S.Title>Vamos jogar!</S.Title>
