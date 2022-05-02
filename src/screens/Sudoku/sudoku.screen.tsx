@@ -173,10 +173,10 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
     setOriginalSudoku(JSON.parse(JSON.stringify(newSudoku.original)));
   }, [route.params.sudokuLevelName]);
 
-  const handlePauseSudoku = () => {
+  const handlePauseSudoku = useCallback(() => {
     setIsSudokuPaused(true);
     pauseTimer();
-  };
+  }, [pauseTimer]);
 
   const handleResumeSudoku = () => {
     setIsSudokuPaused(false);
