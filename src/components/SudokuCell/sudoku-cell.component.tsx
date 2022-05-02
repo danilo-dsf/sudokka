@@ -1,9 +1,9 @@
 import React from 'react';
-import { TouchableOpacityProps } from 'react-native';
+import { PressableProps } from 'react-native';
 
 import * as S from './sudoku-cell.styles';
 
-interface SudokuCellProps extends TouchableOpacityProps {
+interface SudokuCellProps extends PressableProps {
   label: string;
   size: number;
   isEdited: boolean;

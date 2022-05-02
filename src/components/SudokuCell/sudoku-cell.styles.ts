@@ -16,7 +16,7 @@ interface SudokuCellTextProps {
   isErrored: boolean;
 }
 
-export const SudokuCell = styled.TouchableOpacity<SudokuCellProps>`
+export const SudokuCell = styled.Pressable<SudokuCellProps>`
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
   background-color: #ffffff;
