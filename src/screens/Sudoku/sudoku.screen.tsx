@@ -225,7 +225,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
   }, [handlePauseSudoku]);
 
   if (isLoading) {
-    return <LoadingFeedback />;
+    return <LoadingFeedback title="Gerando um novo quadro de Sudoku para você..." />;
   }
 
   return (

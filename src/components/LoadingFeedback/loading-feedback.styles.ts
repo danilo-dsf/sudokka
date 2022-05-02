@@ -23,8 +23,10 @@ export const LogoImage = styled.Image.attrs({
 `;
 
 export const Title = styled.Text`
+  max-width: ${RFValue(300)}px;
   font-size: ${RFValue(13)}px;
   font-family: ${({ theme }) => theme.fonts.light};
   color: ${({ theme }) => darken(0.2, theme.colors.textSecondary)};
+  text-align: center;
   margin-top: ${RFValue(8)}px;
 `;
