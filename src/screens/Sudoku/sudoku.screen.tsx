@@ -178,10 +178,10 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
     setOriginalSudoku(JSON.parse(JSON.stringify(newSudoku.original)));
   }, [route.params.sudokuLevelName]);
 
-  const handlePauseSudoku = () => {
+  const handlePauseSudoku = useCallback(() => {
     setIsSudokuPaused(true);
     pauseTimer();
-  };
+  }, [pauseTimer]);
 
   const handleResumeSudoku = () => {
     setIsSudokuPaused(false);
@@ -207,12 +207,11 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
 
   useEffect(() => {
     const pauseTimerIfInBackground = async (nextAppState: AppStateStatus) => {
-      if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
-        // background para foreground
-        pauseTimer();
-      } else {
+      if (appState.current === 'active' && nextAppState.match(/inactive|background/)) {
         // foreground para background
-        startTimer();
+        handlePauseSudoku();
+      } else {
+        // background para foreground
       }
 
       appState.current = nextAppState;
@@ -223,7 +222,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
     return () => {
       AppState.removeEventListener('change', pauseTimerIfInBackground);
     };
-  }, [pauseTimer, startTimer]);
+  }, [handlePauseSudoku]);
 
   if (isLoading) {
     return <LoadingFeedback />;
