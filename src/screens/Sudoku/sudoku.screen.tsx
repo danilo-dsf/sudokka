@@ -24,6 +24,7 @@ import boxShadowStyles from '../../global/styles/box-shadow.styles';
 import * as S from './sudoku.styles';
 import { formatDuration } from '../../utils/format-duration';
 import { PauseSudokuModal } from '../../modals/PauseSudoku/pause-sudoku.modal';
+import { SudokuData, useSudokuProgress } from '../../hooks/sudoku-progress.hook';
 
 const numberPadKeys = [...CONSTANTS.NUMBERS, 'X'];
 
@@ -36,6 +37,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
   const numberPadKeySize = deviceScreenWidth * 0.175;
 
   const { time: durationInSeconds, start: startTimer, pause: pauseTimer, reset: resetTimer } = useTimer();
+  const { saveSudokuProgress } = useSudokuProgress();
 
   const [originalSudoku, setOriginalSudoku] = useState<SudokuGrid>([]);
   const [sudoku, setSudoku] = useState<SudokuGrid>([]);
@@ -155,8 +157,17 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
       {
         text: 'Sair',
         style: 'default',
-        onPress: () => {
+        onPress: async () => {
           navigation.goBack();
+
+          const sudokuData: SudokuData = {
+            original: originalSudoku,
+            current: sudoku,
+            duration: durationInSeconds,
+            level: route.params.sudokuLevelName,
+          };
+
+          await saveSudokuProgress(sudokuData);
         },
       },
     ]);
@@ -239,7 +250,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
 
         <S.GameInfoWrapper justifyContent="flex-end">
           <Feather name="clock" size={14} color={theme.colors.textSecondary} />
-          <S.GameInfoText marginLeft={4}>{formatDuration(durationInSeconds)}</S.GameInfoText>
+          {/* <S.GameInfoText marginLeft={4}>{formatDuration(durationInSeconds)}</S.GameInfoText> */}
         </S.GameInfoWrapper>
       </S.GameInfoContainer>
 

@@ -14,6 +14,7 @@ import {
 import theme from './src/global/styles/theme.styles';
 
 import { Routes } from './src/routes/app.routes';
+import { AppProvider } from './src/hooks/app.hook';
 
 const App = () => {
   const [fontsLoaded] = useFonts({
@@ -30,13 +31,15 @@ const App = () => {
   return (
     <SafeAreaProvider>
       <ThemeProvider theme={theme.creme}>
-        <StatusBar
-          style={theme.creme.statusBarStyle as StatusBarStyle}
-          backgroundColor={theme.creme.colors.backgroundOffset}
-          translucent
-        />
+        <AppProvider>
+          <StatusBar
+            style={theme.creme.statusBarStyle as StatusBarStyle}
+            backgroundColor={theme.creme.colors.backgroundOffset}
+            translucent
+          />
 
-        <Routes />
+          <Routes />
+        </AppProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );

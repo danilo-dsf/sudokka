@@ -13,9 +13,11 @@ import { Button } from '../../components/Button/button.component';
 import boxShadowStyles from '../../global/styles/box-shadow.styles';
 
 import * as S from './home.styles';
+import { useSudokuProgress } from '../../hooks/sudoku-progress.hook';
 
 export const HomeScreen: React.FC<HomeScreenRouteProps> = ({ navigation }) => {
   const theme = useTheme();
+  const { sudokuProgress } = useSudokuProgress();
 
   const [selectedLevel, setSelectedLevel] = useState<SudokuLevelName>('EASY');
 
@@ -52,6 +54,10 @@ export const HomeScreen: React.FC<HomeScreenRouteProps> = ({ navigation }) => {
         </S.LevelSelectContainer>
 
         <Button title="Começar" icon="play" onPress={handleInitializeSudokuGame} />
+
+        {!!sudokuProgress.current && (
+          <Button title={`Continuar ${sudokuProgress.level} / ${sudokuProgress.duration}`} icon="play" />
+        )}
       </S.Container>
     </SafeAreaView>
   );
