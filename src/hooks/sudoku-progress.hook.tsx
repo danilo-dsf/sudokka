@@ -26,6 +26,7 @@ const SudokuProgressProvider: React.FC = ({ children }) => {
   const saveSudokuProgress = useCallback(async (sudokuData: SudokuData) => {
     try {
       await AsyncStorage.setItem('@Sudokka:sudoku-progress', JSON.stringify(sudokuData));
+      setSudokuProgress(sudokuData);
     } catch (error: any) {
       console.log(JSON.stringify(error));
 

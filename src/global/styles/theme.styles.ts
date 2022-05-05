@@ -10,6 +10,7 @@ export default {
       error: '#ffc09f',
       info: '#a0ced9',
       success: '#adf7b6',
+      default: '#fcf5c7',
       text: '#252226',
       textSecondary: '#49444b',
     },

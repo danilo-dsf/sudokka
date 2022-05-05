@@ -10,6 +10,8 @@
 
 - tela de regras do sudoku
 
+- tela de quando o usuário finaliza o jogo
+
 - anúncios (admob)
 
 #===========================================#
@@ -28,6 +30,8 @@
 - desfazer e refazer ação
 
 - contador de erros
+
+- sistema de anotações
 
 - configurações
 	+ tema da aplicação

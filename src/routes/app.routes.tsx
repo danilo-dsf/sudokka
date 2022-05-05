@@ -8,12 +8,13 @@ import { SudokuLevelName } from '../services/sudoku.service';
 
 import { HomeScreen } from '../screens/Home/home.screen';
 import { SudokuScreen } from '../screens/Sudoku/sudoku.screen';
-import { useSudokuProgress } from '../hooks/sudoku-progress.hook';
+import { SudokuData, useSudokuProgress } from '../hooks/sudoku-progress.hook';
 
 export type AppRoutesParams = {
   Home: undefined;
   Sudoku: {
     sudokuLevelName: SudokuLevelName;
+    sudokuData?: SudokuData;
   };
 };
 

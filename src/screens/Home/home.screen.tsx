@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from 'styled-components';
 
+import { RFValue } from 'react-native-responsive-fontsize';
 import { HomeScreenRouteProps } from '../../routes/app.routes';
 
 import { SudokuLevelName } from '../../services/sudoku.service';
@@ -13,7 +14,8 @@ import { Button } from '../../components/Button/button.component';
 import boxShadowStyles from '../../global/styles/box-shadow.styles';
 
 import * as S from './home.styles';
-import { useSudokuProgress } from '../../hooks/sudoku-progress.hook';
+import { SudokuData, useSudokuProgress } from '../../hooks/sudoku-progress.hook';
+import { formatDuration } from '../../utils/format-duration';
 
 export const HomeScreen: React.FC<HomeScreenRouteProps> = ({ navigation }) => {
   const theme = useTheme();
@@ -23,6 +25,10 @@ export const HomeScreen: React.FC<HomeScreenRouteProps> = ({ navigation }) => {
 
   const handleSelectLevel = (level: SudokuLevelName) => {
     setSelectedLevel(level);
+  };
+
+  const handleContinueSudokuGame = (sudokuData: SudokuData) => {
+    navigation.navigate('Sudoku', { sudokuLevelName: selectedLevel, sudokuData });
   };
 
   const handleInitializeSudokuGame = () => {
@@ -53,11 +59,22 @@ export const HomeScreen: React.FC<HomeScreenRouteProps> = ({ navigation }) => {
           ))}
         </S.LevelSelectContainer>
 
-        <Button title="Começar" icon="play" onPress={handleInitializeSudokuGame} />
-
         {!!sudokuProgress.current && (
-          <Button title={`Continuar ${sudokuProgress.level} / ${sudokuProgress.duration}`} icon="play" />
+          <Button
+            style={{ marginBottom: RFValue(8) }}
+            title="Continuar"
+            subTitle={`${formatDuration(sudokuProgress.duration)} | ${CONSTANTS.LEVELS[sudokuProgress.level].label}`}
+            icon="play-circle"
+            colorScheme="info"
+            onPress={() => handleContinueSudokuGame(sudokuProgress)}
+          />
         )}
+
+        <Button
+          title={sudokuProgress.current ? 'Começar novo jogo' : 'Começar'}
+          icon="play"
+          onPress={handleInitializeSudokuGame}
+        />
       </S.Container>
     </SafeAreaView>
   );

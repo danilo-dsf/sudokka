@@ -15,6 +15,7 @@ import {
   SudokuCell as SudokuCellType,
   SudokuGrid,
   SudokuLevel,
+  SudokuLevelName,
 } from '../../services/sudoku.service';
 
 import { SudokuCell } from '../../components/SudokuCell/sudoku-cell.component';
@@ -36,11 +37,17 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
   const sudokuGridRemainingSpace = deviceScreenWidth - sudokuCellSize * 9;
   const numberPadKeySize = deviceScreenWidth * 0.175;
 
-  const { time: durationInSeconds, start: startTimer, pause: pauseTimer, reset: resetTimer } = useTimer();
+  const {
+    time: durationInSeconds,
+    start: startTimer,
+    pause: pauseTimer,
+    reset: resetTimer,
+  } = useTimer({ initialTime: route.params.sudokuData ? route.params.sudokuData.duration : 0 });
   const { saveSudokuProgress } = useSudokuProgress();
 
   const [originalSudoku, setOriginalSudoku] = useState<SudokuGrid>([]);
   const [sudoku, setSudoku] = useState<SudokuGrid>([]);
+  const [sudokuLevel, setSudokuLevel] = useState<SudokuLevelName>('EASY');
   const [selectedCell, setSelectedCell] = useState<SudokuCellType>();
   const [hoveredQuadrant, setHoveredQuadrant] = useState<SudokuCellType[]>([]);
   const [erroredCells, setErroredCells] = useState<SudokuCellType[]>([]);
@@ -152,7 +159,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
   };
 
   const handleGoBack = () => {
-    Alert.alert('Deseja mesmo sair?', 'Seu progresso será perdido.', [
+    Alert.alert('Deseja mesmo sair?', 'Seu progresso será salvo e você poderá continuar esse jogo quando quiser.', [
       { text: 'Não', style: 'cancel' },
       {
         text: 'Sair',
@@ -164,7 +171,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
             original: originalSudoku,
             current: sudoku,
             duration: durationInSeconds,
-            level: route.params.sudokuLevelName,
+            level: sudokuLevel,
           };
 
           await saveSudokuProgress(sudokuData);
@@ -174,15 +181,22 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
   };
 
   const generateSudoku = useCallback(() => {
-    const newSudoku = sudokuGen(CONSTANTS.LEVELS[route.params.sudokuLevelName] as SudokuLevel);
+    if (route.params.sudokuData) {
+      setSudoku(route.params.sudokuData.current);
+      setOriginalSudoku(route.params.sudokuData.original);
+      setSudokuLevel(route.params.sudokuData.level);
+    } else {
+      const newSudoku = sudokuGen(CONSTANTS.LEVELS[route.params.sudokuLevelName] as SudokuLevel);
 
-    if (!newSudoku?.question) {
-      return;
+      if (!newSudoku?.question) {
+        return;
+      }
+
+      setSudoku(JSON.parse(JSON.stringify(newSudoku.question)));
+      setOriginalSudoku(JSON.parse(JSON.stringify(newSudoku.original)));
+      setSudokuLevel(route.params.sudokuLevelName);
     }
-
-    setSudoku(JSON.parse(JSON.stringify(newSudoku.question)));
-    setOriginalSudoku(JSON.parse(JSON.stringify(newSudoku.original)));
-  }, [route.params.sudokuLevelName]);
+  }, [route.params.sudokuData, route.params.sudokuLevelName]);
 
   const handlePauseSudoku = useCallback(() => {
     setIsSudokuPaused(true);
@@ -245,12 +259,12 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
 
       <S.GameInfoContainer padding={sudokuGridRemainingSpace / 2}>
         <S.GameInfoWrapper>
-          <S.GameInfoText>{CONSTANTS.LEVELS[route.params.sudokuLevelName].label}</S.GameInfoText>
+          <S.GameInfoText>{CONSTANTS.LEVELS[sudokuLevel].label}</S.GameInfoText>
         </S.GameInfoWrapper>
 
         <S.GameInfoWrapper justifyContent="flex-end">
           <Feather name="clock" size={14} color={theme.colors.textSecondary} />
-          {/* <S.GameInfoText marginLeft={4}>{formatDuration(durationInSeconds)}</S.GameInfoText> */}
+          <S.GameInfoText marginLeft={4}>{formatDuration(durationInSeconds)}</S.GameInfoText>
         </S.GameInfoWrapper>
       </S.GameInfoContainer>
 
