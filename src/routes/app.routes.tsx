@@ -7,19 +7,16 @@ import { SudokuLevelName } from '../services/sudoku.service';
 
 import { HomeScreen } from '../screens/Home/home.screen';
 import { SudokuScreen } from '../screens/Sudoku/sudoku.screen';
-import { RulesScreen } from '../screens/Rules/rules.screen';
 
 export type AppRoutesParams = {
   Home: undefined;
   Sudoku: {
     sudokuLevelName: SudokuLevelName;
   };
-  Rules: undefined;
 };
 
 export type HomeScreenRouteProps = NativeStackScreenProps<AppRoutesParams, 'Home'>;
 export type SudokuScreenRouteProps = NativeStackScreenProps<AppRoutesParams, 'Sudoku'>;
-export type RulesScreenRouteProps = NativeStackScreenProps<AppRoutesParams, 'Rules'>;
 
 const Stack = createNativeStackNavigator<AppRoutesParams>();
 
@@ -38,7 +35,6 @@ export const Routes: React.FC = () => {
       >
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Sudoku" component={SudokuScreen} />
-        <Stack.Screen name="Rules" component={RulesScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
