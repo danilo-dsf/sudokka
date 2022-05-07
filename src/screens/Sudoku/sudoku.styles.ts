@@ -35,6 +35,7 @@ export const SudokuRow = styled.View`
 
 export const NumberPad = styled.View`
   width: 100%;
+  margin-bottom: ${RFValue(64)}px;
 
   flex-direction: row;
   flex-wrap: wrap;
