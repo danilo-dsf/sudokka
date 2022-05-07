@@ -8,7 +8,7 @@
 	+ tempo
 	+ dificuldade
 
-- tela de regras do sudoku
+- tela de regras do sudoku ✅
 
 - tela de quando o usuário finaliza o jogo
 

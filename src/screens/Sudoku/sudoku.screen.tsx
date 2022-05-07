@@ -24,11 +24,10 @@ import { PauseSudokuModal } from '../../modals/PauseSudoku/pause-sudoku.modal';
 import { SudokuCell } from '../../components/SudokuCell/sudoku-cell.component';
 import { NumberPadKey } from '../../components/NumberPadKey/number-pad-key.component';
 import { LoadingFeedback } from '../../components/LoadingFeedback/loading-feedback.component';
-
-import boxShadowStyles from '../../global/styles/box-shadow.styles';
+import { SudokuData, useSudokuProgress } from '../../hooks/sudoku-progress.hook';
+import { TitleBar } from '../../components/TitleBar/title-bar.component';
 
 import * as S from './sudoku.styles';
-import { SudokuData, useSudokuProgress } from '../../hooks/sudoku-progress.hook';
 
 const numberPadKeys = [...CONSTANTS.NUMBERS, 'X'];
 
@@ -260,17 +259,11 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
 
   return (
     <S.Container>
-      <S.TitleBar style={boxShadowStyles}>
-        <S.BackButton onPress={handleGoBack}>
-          <Feather name="arrow-left" size={24} color={theme.colors.textSecondary} />
-        </S.BackButton>
-
-        <S.TitleBarLabel>Sudokka</S.TitleBarLabel>
-
-        <S.PauseButton onPress={handlePauseSudoku}>
-          <Feather name="pause" size={24} color={theme.colors.textSecondary} />
-        </S.PauseButton>
-      </S.TitleBar>
+      <TitleBar
+        title="Sudokka"
+        leftButton={{ icon: 'arrow-left', onPress: handleGoBack }}
+        rightButtons={[{ icon: 'pause', onPress: handlePauseSudoku }]}
+      />
 
       <S.GameInfoContainer padding={sudokuGridRemainingSpace / 2}>
         <S.GameInfoWrapper>
