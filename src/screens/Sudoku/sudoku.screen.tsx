@@ -8,6 +8,7 @@ import { Feather } from '@expo/vector-icons';
 import { SudokuScreenRouteProps } from '../../routes/app.routes';
 
 import CONSTANTS from '../../utils/constants';
+import { formatDuration } from '../../utils/format-duration';
 
 import {
   sudokuGen,
@@ -18,13 +19,15 @@ import {
   SudokuLevelName,
 } from '../../services/sudoku.service';
 
+import { PauseSudokuModal } from '../../modals/PauseSudoku/pause-sudoku.modal';
+
 import { SudokuCell } from '../../components/SudokuCell/sudoku-cell.component';
 import { NumberPadKey } from '../../components/NumberPadKey/number-pad-key.component';
+import { LoadingFeedback } from '../../components/LoadingFeedback/loading-feedback.component';
 
 import boxShadowStyles from '../../global/styles/box-shadow.styles';
+
 import * as S from './sudoku.styles';
-import { formatDuration } from '../../utils/format-duration';
-import { PauseSudokuModal } from '../../modals/PauseSudoku/pause-sudoku.modal';
 import { SudokuData, useSudokuProgress } from '../../hooks/sudoku-progress.hook';
 
 const numberPadKeys = [...CONSTANTS.NUMBERS, 'X'];
@@ -53,6 +56,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
   const [erroredCells, setErroredCells] = useState<SudokuCellType[]>([]);
   const [isSudokuWon, setIsSudokuWon] = useState(false);
   const [isSudokuPaused, setIsSudokuPaused] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const appState = useRef(AppState.currentState);
 
@@ -181,6 +185,8 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
   };
 
   const generateSudoku = useCallback(() => {
+    setIsLoading(true);
+
     if (route.params.sudokuData) {
       setSudoku(route.params.sudokuData.current);
       setOriginalSudoku(route.params.sudokuData.original);
@@ -211,6 +217,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
   useEffect(() => {
     generateSudoku();
     startTimer();
+    setIsLoading(false);
   }, [generateSudoku, startTimer]);
 
   useEffect(() => {
@@ -242,6 +249,14 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
       AppState.removeEventListener('change', pauseTimerIfInBackground);
     };
   }, [handlePauseSudoku]);
+
+  if (isLoading) {
+    const loadingTitle = route.params.sudokuData?.current
+      ? 'Carregando seu progesso...'
+      : 'Gerando um novo quadro de Sudoku para você...';
+
+    return <LoadingFeedback title={loadingTitle} />;
+  }
 
   return (
     <S.Container>
