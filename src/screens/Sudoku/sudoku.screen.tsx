@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, AppState, AppStateStatus, Text, useWindowDimensions, Modal } from 'react-native';
+import { Alert, AppState, AppStateStatus, Text, useWindowDimensions, Modal, BackHandler } from 'react-native';
 import { useTimer } from 'use-timer';
 import uuid from 'react-native-uuid';
 import { useTheme } from 'styled-components/native';
@@ -161,7 +161,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
     setErroredCells([]);
   };
 
-  const handleGoBack = () => {
+  const handleGoBack = useCallback(() => {
     Alert.alert('Deseja mesmo sair?', 'Seu progresso será salvo e você poderá continuar esse jogo quando quiser.', [
       { text: 'Não', style: 'cancel' },
       {
@@ -181,7 +181,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
         },
       },
     ]);
-  };
+  }, [durationInSeconds, navigation, originalSudoku, saveSudokuProgress, sudoku, sudokuLevel]);
 
   const generateSudoku = useCallback(() => {
     setIsLoading(true);
@@ -248,6 +248,17 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
       AppState.removeEventListener('change', pauseTimerIfInBackground);
     };
   }, [handlePauseSudoku]);
+
+  useEffect(() => {
+    const handleBackAction = () => {
+      handleGoBack();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackAction);
+
+    return () => backHandler.remove();
+  }, [handleGoBack]);
 
   if (isLoading) {
     const loadingTitle = route.params.sudokuData?.current
