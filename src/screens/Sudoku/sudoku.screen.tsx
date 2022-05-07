@@ -276,27 +276,35 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
         </S.GameInfoWrapper>
       </S.GameInfoContainer>
 
-      <S.SudokuContainer padding={sudokuGridRemainingSpace / 2}>
-        {sudoku.map((row, rowIndex) =>
-          row.map((number, columnIndex) => (
-            <SudokuCell
-              key={String(uuid.v4())}
-              label={!number ? '' : number.toString()}
-              size={sudokuCellSize}
-              disabled={!!originalSudoku[rowIndex][columnIndex]}
-              isEdited={!originalSudoku[rowIndex][columnIndex]}
-              isSelected={selectedCell?.row === rowIndex && selectedCell.col === columnIndex}
-              isHovered={
-                hoveredQuadrant.some((cell) => cell.row === rowIndex && cell.col === columnIndex) ||
-                rowIndex === selectedCell?.row ||
-                columnIndex === selectedCell?.col
-              }
-              isErrored={erroredCells.some((cell) => cell.row === rowIndex && cell.col === columnIndex)}
-              onPress={() => handleSelectCell(rowIndex, columnIndex)}
-            />
-          )),
+      <S.SudokuContainer
+        padding={sudokuGridRemainingSpace / 2}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        alwaysBounceVertical={false}
+        data={sudoku}
+        keyExtractor={() => String(uuid.v4())}
+        renderItem={({ item: row, index: rowIndex }) => (
+          <S.SudokuRow>
+            {row.map((number, columnIndex) => (
+              <SudokuCell
+                key={String(uuid.v4())}
+                label={!number ? '' : number.toString()}
+                size={sudokuCellSize}
+                disabled={!!originalSudoku[rowIndex][columnIndex]}
+                isEdited={!originalSudoku[rowIndex][columnIndex]}
+                isSelected={selectedCell?.row === rowIndex && selectedCell.col === columnIndex}
+                isHovered={
+                  hoveredQuadrant.some((cell) => cell.row === rowIndex && cell.col === columnIndex) ||
+                  rowIndex === selectedCell?.row ||
+                  columnIndex === selectedCell?.col
+                }
+                isErrored={erroredCells.some((cell) => cell.row === rowIndex && cell.col === columnIndex)}
+                onPress={() => handleSelectCell(rowIndex, columnIndex)}
+              />
+            ))}
+          </S.SudokuRow>
         )}
-      </S.SudokuContainer>
+      />
 
       {isSudokuWon && <Text style={{ color: 'green', fontWeight: 'bold', marginTop: 32 }}>VOCÊ GANHOU!</Text>}
 
