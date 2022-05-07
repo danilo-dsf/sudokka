@@ -306,7 +306,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
             key={String(uuid.v4())}
             label={numberPadKey}
             size={numberPadKeySize}
-            disabled={!selectedCell?.row && !selectedCell?.col}
+            disabled={!selectedCell || Number.isNaN(Number(selectedCell.row)) || Number.isNaN(Number(selectedCell.col))}
             onPress={numberPadKey !== 'X' ? () => handleInsertNumber(Number(numberPadKey)) : handleClearCell}
           />
         ))}
