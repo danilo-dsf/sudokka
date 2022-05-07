@@ -1,4 +1,5 @@
 import React from 'react';
+import { Pressable } from 'react-native';
 import uuid from 'react-native-uuid';
 import { useTheme } from 'styled-components';
 import { Feather } from '@expo/vector-icons';
