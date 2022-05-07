@@ -1,8 +1,8 @@
 #=================== MVP ===================#
 
-- sudoku loading feedback
+- sudoku loading feedback ✅
 
-- storage game progress
+- storage game progress ✅
 	+ sudoku original
 	+ sudoku atual
 	+ tempo
