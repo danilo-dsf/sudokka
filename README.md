@@ -1,14 +1,16 @@
 #=================== MVP ===================#
 
-- sudoku loading feedback
+- sudoku loading feedback ✅
 
-- storage game progress
+- storage game progress ✅
 	+ sudoku original
 	+ sudoku atual
 	+ tempo
 	+ dificuldade
 
 - tela de regras do sudoku ✅
+
+- tela de quando o usuário finaliza o jogo
 
 - anúncios (admob)
 
@@ -28,6 +30,8 @@
 - desfazer e refazer ação
 
 - contador de erros
+
+- sistema de anotações
 
 - configurações
 	+ tema da aplicação
