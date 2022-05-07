@@ -113,7 +113,7 @@ export const HomeScreen: React.FC<HomeScreenRouteProps> = ({ navigation }) => {
         </S.Container>
       </SafeAreaView>
 
-      <Modal visible={showRulesModal} animationType="slide">
+      <Modal visible={showRulesModal} onRequestClose={handleCloseRulesModal} animationType="slide">
         <RulesModal onClose={handleCloseRulesModal} />
       </Modal>
     </>
