@@ -1,5 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, AppState, AppStateStatus, Text, useWindowDimensions, Modal, BackHandler } from 'react-native';
+import {
+  Alert,
+  AppState,
+  AppStateStatus,
+  Text,
+  useWindowDimensions,
+  Modal,
+  BackHandler,
+  ListRenderItemInfo,
+} from 'react-native';
 import { useTimer } from 'use-timer';
 import uuid from 'react-native-uuid';
 import { useTheme } from 'styled-components/native';
@@ -213,6 +222,28 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
     startTimer();
   };
 
+  const renderSudokuRow = ({ item: row, index: rowIndex }: ListRenderItemInfo<number[]>) => (
+    <S.SudokuRow>
+      {row.map((number, columnIndex) => (
+        <SudokuCell
+          key={String(uuid.v4())}
+          label={!number ? '' : number.toString()}
+          size={sudokuCellSize}
+          disabled={!!originalSudoku[rowIndex][columnIndex]}
+          isEdited={!originalSudoku[rowIndex][columnIndex]}
+          isSelected={selectedCell?.row === rowIndex && selectedCell?.col === columnIndex}
+          isHovered={
+            hoveredQuadrant.some((cell) => cell.row === rowIndex && cell.col === columnIndex) ||
+            rowIndex === selectedCell?.row ||
+            columnIndex === selectedCell?.col
+          }
+          isErrored={erroredCells.some((cell) => cell.row === rowIndex && cell.col === columnIndex)}
+          onPressIn={() => handleSelectCell(rowIndex, columnIndex)}
+        />
+      ))}
+    </S.SudokuRow>
+  );
+
   useEffect(() => {
     generateSudoku();
     startTimer();
@@ -294,27 +325,8 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
         alwaysBounceVertical={false}
         data={sudoku}
         keyExtractor={() => String(uuid.v4())}
-        renderItem={({ item: row, index: rowIndex }) => (
-          <S.SudokuRow>
-            {row.map((number, columnIndex) => (
-              <SudokuCell
-                key={String(uuid.v4())}
-                label={!number ? '' : number.toString()}
-                size={sudokuCellSize}
-                disabled={!!originalSudoku[rowIndex][columnIndex]}
-                isEdited={!originalSudoku[rowIndex][columnIndex]}
-                isSelected={selectedCell?.row === rowIndex && selectedCell.col === columnIndex}
-                isHovered={
-                  hoveredQuadrant.some((cell) => cell.row === rowIndex && cell.col === columnIndex) ||
-                  rowIndex === selectedCell?.row ||
-                  columnIndex === selectedCell?.col
-                }
-                isErrored={erroredCells.some((cell) => cell.row === rowIndex && cell.col === columnIndex)}
-                onPress={() => handleSelectCell(rowIndex, columnIndex)}
-              />
-            ))}
-          </S.SudokuRow>
-        )}
+        renderItem={renderSudokuRow}
+        getItemLayout={(_, index) => ({ length: sudokuCellSize, offset: sudokuCellSize * index, index })}
       />
 
       {isSudokuWon && <Text style={{ color: 'green', fontWeight: 'bold', marginTop: 32 }}>VOCÊ GANHOU!</Text>}
