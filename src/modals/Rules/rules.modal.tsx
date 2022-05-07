@@ -1,8 +1,6 @@
 import React from 'react';
-import { Feather } from '@expo/vector-icons';
-import { useTheme } from 'styled-components/native';
 
-import boxShadowStyles from '../../global/styles/box-shadow.styles';
+import { TitleBar } from '../../components/TitleBar/title-bar.component';
 
 import * as S from './rules.styles';
 
@@ -11,17 +9,9 @@ interface RulesModalProps {
 }
 
 export const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
-  const theme = useTheme();
-
   return (
     <S.Container>
-      <S.TitleBar style={boxShadowStyles}>
-        <S.CloseButton onPress={onClose}>
-          <Feather name="x" size={24} color={theme.colors.textSecondary} />
-        </S.CloseButton>
-
-        <S.TitleBarLabel>Regras do Sudoku</S.TitleBarLabel>
-      </S.TitleBar>
+      <TitleBar title="Regras do Sudoku" leftButton={{ icon: 'x', onPress: onClose }} />
 
       <S.SudokuGameRulesImgContainer>
         <S.SudokuGameRulesImg />
