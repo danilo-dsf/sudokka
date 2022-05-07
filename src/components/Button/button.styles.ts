@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Feather } from '@expo/vector-icons';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { darken } from 'polished';
 
@@ -16,9 +17,12 @@ export const Container = styled(LinearGradient)`
   align-items: center;
 `;
 
+export const Icon = styled(Feather)`
+  margin-right: ${RFValue(16)}px;
+`;
+
 export const Title = styled.Text<TitleProps>`
   font-size: ${RFValue(16)}px;
   font-family: ${({ theme }) => theme.fonts.semibold};
   color: ${({ theme, color }) => darken(0.6, theme.colors[color])};
-  margin-left: ${RFValue(16)}px;
 `;
