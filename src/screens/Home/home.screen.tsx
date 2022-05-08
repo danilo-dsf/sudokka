@@ -106,14 +106,14 @@ export const HomeScreen: React.FC<HomeScreenRouteProps> = ({ navigation }) => {
           )}
 
           <Button
-            title={sudokuProgress.current ? 'Começar novo jogo' : 'Começar'}
+            title={sudokuProgress.current ? 'Novo jogo' : 'Começar'}
             icon="play"
             onPress={handleInitializeSudokuGame}
           />
         </S.Container>
       </SafeAreaView>
 
-      <Modal visible={showRulesModal} animationType="slide">
+      <Modal visible={showRulesModal} onRequestClose={handleCloseRulesModal} animationType="slide">
         <RulesModal onClose={handleCloseRulesModal} />
       </Modal>
     </>

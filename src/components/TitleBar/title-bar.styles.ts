@@ -12,11 +12,9 @@ export const Container = styled.View`
   align-items: center;
 `;
 
-export const Button = styled.TouchableOpacity`
-  height: 100%;
-
-  justify-content: center;
-`;
+export const Button = styled.Pressable.attrs({
+  android_ripple: { borderless: true, radius: RFValue(24) },
+})``;
 
 export const Title = styled.Text`
   flex: 1;

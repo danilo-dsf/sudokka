@@ -1,5 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, AppState, AppStateStatus, Text, useWindowDimensions, Modal } from 'react-native';
+import {
+  Alert,
+  AppState,
+  AppStateStatus,
+  Text,
+  useWindowDimensions,
+  Modal,
+  BackHandler,
+  ListRenderItemInfo,
+} from 'react-native';
 import { useTimer } from 'use-timer';
 import uuid from 'react-native-uuid';
 import { useTheme } from 'styled-components/native';
@@ -161,7 +170,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
     setErroredCells([]);
   };
 
-  const handleGoBack = () => {
+  const handleGoBack = useCallback(() => {
     Alert.alert('Deseja mesmo sair?', 'Seu progresso será salvo e você poderá continuar esse jogo quando quiser.', [
       { text: 'Não', style: 'cancel' },
       {
@@ -181,7 +190,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
         },
       },
     ]);
-  };
+  }, [durationInSeconds, navigation, originalSudoku, saveSudokuProgress, sudoku, sudokuLevel]);
 
   const generateSudoku = useCallback(() => {
     setIsLoading(true);
@@ -212,6 +221,28 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
     setIsSudokuPaused(false);
     startTimer();
   };
+
+  const renderSudokuRow = ({ item: row, index: rowIndex }: ListRenderItemInfo<number[]>) => (
+    <S.SudokuRow>
+      {row.map((number, columnIndex) => (
+        <SudokuCell
+          key={String(uuid.v4())}
+          label={!number ? '' : number.toString()}
+          size={sudokuCellSize}
+          disabled={!!originalSudoku[rowIndex][columnIndex]}
+          isEdited={!originalSudoku[rowIndex][columnIndex]}
+          isSelected={selectedCell?.row === rowIndex && selectedCell?.col === columnIndex}
+          isHovered={
+            hoveredQuadrant.some((cell) => cell.row === rowIndex && cell.col === columnIndex) ||
+            rowIndex === selectedCell?.row ||
+            columnIndex === selectedCell?.col
+          }
+          isErrored={erroredCells.some((cell) => cell.row === rowIndex && cell.col === columnIndex)}
+          onPressIn={() => handleSelectCell(rowIndex, columnIndex)}
+        />
+      ))}
+    </S.SudokuRow>
+  );
 
   useEffect(() => {
     generateSudoku();
@@ -249,6 +280,17 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
     };
   }, [handlePauseSudoku]);
 
+  useEffect(() => {
+    const handleBackAction = () => {
+      handleGoBack();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackAction);
+
+    return () => backHandler.remove();
+  }, [handleGoBack]);
+
   if (isLoading) {
     const loadingTitle = route.params.sudokuData?.current
       ? 'Carregando seu progesso...'
@@ -276,27 +318,16 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
         </S.GameInfoWrapper>
       </S.GameInfoContainer>
 
-      <S.SudokuContainer padding={sudokuGridRemainingSpace / 2}>
-        {sudoku.map((row, rowIndex) =>
-          row.map((number, columnIndex) => (
-            <SudokuCell
-              key={String(uuid.v4())}
-              label={!number ? '' : number.toString()}
-              size={sudokuCellSize}
-              disabled={!!originalSudoku[rowIndex][columnIndex]}
-              isEdited={!originalSudoku[rowIndex][columnIndex]}
-              isSelected={selectedCell?.row === rowIndex && selectedCell.col === columnIndex}
-              isHovered={
-                hoveredQuadrant.some((cell) => cell.row === rowIndex && cell.col === columnIndex) ||
-                rowIndex === selectedCell?.row ||
-                columnIndex === selectedCell?.col
-              }
-              isErrored={erroredCells.some((cell) => cell.row === rowIndex && cell.col === columnIndex)}
-              onPress={() => handleSelectCell(rowIndex, columnIndex)}
-            />
-          )),
-        )}
-      </S.SudokuContainer>
+      <S.SudokuContainer
+        padding={sudokuGridRemainingSpace / 2}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        alwaysBounceVertical={false}
+        data={sudoku}
+        keyExtractor={() => String(uuid.v4())}
+        renderItem={renderSudokuRow}
+        getItemLayout={(_, index) => ({ length: sudokuCellSize, offset: sudokuCellSize * index, index })}
+      />
 
       {isSudokuWon && <Text style={{ color: 'green', fontWeight: 'bold', marginTop: 32 }}>VOCÊ GANHOU!</Text>}
 

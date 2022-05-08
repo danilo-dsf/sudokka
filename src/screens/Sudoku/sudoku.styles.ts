@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { FlatList } from 'react-native';
 
 interface SudokuContainerProps {
   padding: number;
@@ -23,15 +24,18 @@ export const Container = styled(SafeAreaView)`
   background-color: ${({ theme }) => theme.colors.background};
 `;
 
-export const SudokuContainer = styled.View<SudokuContainerProps>`
+export const SudokuContainer = styled(FlatList as new () => FlatList<number[]>)<SudokuContainerProps>`
+  width: 100%;
   padding: ${({ padding }) => padding}px;
+`;
 
+export const SudokuRow = styled.View`
   flex-direction: row;
-  flex-wrap: wrap;
 `;
 
 export const NumberPad = styled.View`
   width: 100%;
+  margin-bottom: ${RFValue(64)}px;
 
   flex-direction: row;
   flex-wrap: wrap;
