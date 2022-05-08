@@ -106,7 +106,7 @@ export const HomeScreen: React.FC<HomeScreenRouteProps> = ({ navigation }) => {
           )}
 
           <Button
-            title={sudokuProgress.current ? 'Começar novo jogo' : 'Começar'}
+            title={sudokuProgress.current ? 'Novo jogo' : 'Começar'}
             icon="play"
             onPress={handleInitializeSudokuGame}
           />

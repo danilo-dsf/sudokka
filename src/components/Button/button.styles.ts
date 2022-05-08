@@ -17,9 +17,7 @@ export const Container = styled(LinearGradient)`
   align-items: center;
 `;
 
-export const TextContainer = styled.View`
-  margin-left: ${RFValue(16)}px;
-`;
+export const TextContainer = styled.View``;
 
 export const Icon = styled(Feather)`
   margin-right: ${RFValue(16)}px;
