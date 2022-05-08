@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
   AppState,
@@ -56,17 +56,22 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
   } = useTimer({ initialTime: route.params.sudokuData ? route.params.sudokuData.duration : 0 });
   const { saveSudokuProgress } = useSudokuProgress();
 
+  const appState = useRef(AppState.currentState);
+
   const [originalSudoku, setOriginalSudoku] = useState<SudokuGrid>([]);
   const [sudoku, setSudoku] = useState<SudokuGrid>([]);
   const [sudokuLevel, setSudokuLevel] = useState<SudokuLevelName>('EASY');
-  const [selectedCell, setSelectedCell] = useState<SudokuCellType>();
+  const [selectedCell, setSelectedCell] = useState<SudokuCellType>({} as SudokuCellType);
   const [hoveredQuadrant, setHoveredQuadrant] = useState<SudokuCellType[]>([]);
   const [erroredCells, setErroredCells] = useState<SudokuCellType[]>([]);
   const [isSudokuWon, setIsSudokuWon] = useState(false);
   const [isSudokuPaused, setIsSudokuPaused] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const appState = useRef(AppState.currentState);
+  const isNoneCellSelected = useMemo(
+    () => !selectedCell || Number.isNaN(Number(selectedCell.row)) || Number.isNaN(Number(selectedCell.col)),
+    [selectedCell],
+  );
 
   const hoverQuadrantRowAndColumnBasedOnSelectedCell = (row: number, col: number) => {
     const boxStartRow = row - (row % 3);
@@ -89,7 +94,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
   };
 
   const checkInsertErrorInsideQuadrant = (insertedNumber: number): SudokuCellType[] => {
-    if (!selectedCell?.row && !selectedCell?.col) {
+    if (isNoneCellSelected) {
       return [];
     }
 
@@ -99,7 +104,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
   };
 
   const checkInsertErrorInsideRow = (insertedNumber: number): SudokuCellType[] => {
-    if (!selectedCell?.row && !selectedCell?.col) {
+    if (isNoneCellSelected) {
       return [];
     }
 
@@ -115,7 +120,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
   };
 
   const checkInsertErrorInsideCol = (insertedNumber: number): SudokuCellType[] => {
-    if (!selectedCell?.row && !selectedCell?.col) {
+    if (isNoneCellSelected) {
       return [];
     }
 
@@ -131,7 +136,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
   };
 
   const handleInsertNumber = (number: number) => {
-    if (!selectedCell?.row && !selectedCell?.col) {
+    if (isNoneCellSelected) {
       return;
     }
 
@@ -157,7 +162,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
   };
 
   const handleClearCell = () => {
-    if (!selectedCell?.row && !selectedCell?.col) {
+    if (isNoneCellSelected) {
       return;
     }
 
@@ -337,7 +342,7 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
             key={String(uuid.v4())}
             label={numberPadKey}
             size={numberPadKeySize}
-            disabled={!selectedCell || Number.isNaN(Number(selectedCell.row)) || Number.isNaN(Number(selectedCell.col))}
+            disabled={isNoneCellSelected}
             onPress={numberPadKey !== 'X' ? () => handleInsertNumber(Number(numberPadKey)) : handleClearCell}
           />
         ))}
