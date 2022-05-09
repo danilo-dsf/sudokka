@@ -98,7 +98,11 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
       return [];
     }
 
-    const quadrantErrors = hoveredQuadrant.filter((cell) => sudoku[cell.row][cell.col] === insertedNumber);
+    const quadrantErrors = hoveredQuadrant.filter((cell) => {
+      const isSeletedCell = cell.col === selectedCell.col && cell.row === selectedCell.row;
+
+      return sudoku[cell.row][cell.col] === insertedNumber && !isSeletedCell;
+    });
 
     return quadrantErrors;
   };
@@ -111,7 +115,9 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
     const rowErrors: SudokuCellType[] = [];
 
     for (let i = 0; i < CONSTANTS.GRID_SIZE; i += 1) {
-      if (sudoku[selectedCell.row][i] === insertedNumber) {
+      const isSelectedCell = i === selectedCell.col;
+
+      if (sudoku[selectedCell.row][i] === insertedNumber && !isSelectedCell) {
         rowErrors.push({ row: selectedCell.row, col: i });
       }
     }
@@ -127,7 +133,9 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
     const colErrors: SudokuCellType[] = [];
 
     for (let i = 0; i < CONSTANTS.GRID_SIZE; i += 1) {
-      if (sudoku[i][selectedCell.col] === insertedNumber) {
+      const isSelectedCell = i === selectedCell.row;
+
+      if (sudoku[i][selectedCell.col] === insertedNumber && !isSelectedCell) {
         colErrors.push({ row: i, col: selectedCell.col });
       }
     }
