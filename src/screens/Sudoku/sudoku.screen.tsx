@@ -27,6 +27,7 @@ import {
   SudokuLevel,
   SudokuLevelName,
 } from '../../services/sudoku.service';
+import { showInterstitialAd } from '../../services/admob.service';
 
 import { PauseSudokuModal } from '../../modals/PauseSudoku/pause-sudoku.modal';
 
@@ -230,7 +231,9 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
     pauseTimer();
   }, [pauseTimer]);
 
-  const handleResumeSudoku = () => {
+  const handleResumeSudoku = async () => {
+    await showInterstitialAd();
+
     setIsSudokuPaused(false);
     startTimer();
   };
@@ -269,6 +272,9 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
       setIsSudokuWon(isGameWin);
 
       if (isGameWin) {
+        // TODO
+        // exibir anuncios
+        // await showInterstitialAd();
         resetTimer();
       }
     }
