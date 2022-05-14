@@ -1,7 +1,7 @@
 import { AdMobInterstitial } from 'expo-ads-admob';
 
 export const showInterstitialAd = async () => {
-  const adUnitId = process.env.ADMOB_INTERSTITIAL_ID_TEST;
+  const adUnitId = process.env.ADMOB_INTERSTITIAL_ID;
 
   if (adUnitId) {
     await AdMobInterstitial.setAdUnitID(adUnitId);

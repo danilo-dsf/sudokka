@@ -47,7 +47,7 @@ const App = () => {
         <AdMobBanner
           style={{ position: 'absolute', bottom: 0 }}
           bannerSize="fullBanner"
-          adUnitID={process.env.ADMOB_BANNER_ID_TEST}
+          adUnitID={process.env.ADMOB_BANNER_ID}
           servePersonalizedAds
           onDidFailToReceiveAdWithError={(error) => console.log(JSON.stringify(error))}
         />
