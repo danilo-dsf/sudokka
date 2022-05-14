@@ -26,7 +26,8 @@
       },
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-8034135427582583~6320243993"
-      }
+      },
+      "package": "br.sudokka"
     },
     "web": {
       "favicon": "./assets/favicon.png"
