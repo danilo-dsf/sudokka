@@ -9,6 +9,7 @@ import {
   Nunito_400Regular,
   Nunito_600SemiBold,
   Nunito_700Bold,
+  Nunito_900Black,
   useFonts,
 } from '@expo-google-fonts/nunito';
 
@@ -23,6 +24,7 @@ const App = () => {
     Nunito_400Regular,
     Nunito_600SemiBold,
     Nunito_700Bold,
+    Nunito_900Black,
   });
 
   if (!fontsLoaded) {

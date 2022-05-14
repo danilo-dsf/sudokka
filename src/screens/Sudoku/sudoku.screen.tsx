@@ -30,6 +30,7 @@ import {
 import { showInterstitialAd } from '../../services/admob.service';
 
 import { PauseSudokuModal } from '../../modals/PauseSudoku/pause-sudoku.modal';
+import { FinishSudokuModal } from '../../modals/FinishSudoku/finish-sudoku.modal';
 
 import { SudokuCell } from '../../components/SudokuCell/sudoku-cell.component';
 import { NumberPadKey } from '../../components/NumberPadKey/number-pad-key.component';
@@ -238,6 +239,14 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
     startTimer();
   };
 
+  const handleFinishGameAndReturnHome = async () => {
+    await showInterstitialAd();
+
+    resetTimer();
+
+    navigation.goBack();
+  };
+
   const renderSudokuRow = ({ item: row, index: rowIndex }: ListRenderItemInfo<number[]>) => (
     <S.SudokuRow>
       {row.map((number, columnIndex) => (
@@ -269,16 +278,16 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
   useEffect(() => {
     if (sudoku.length && !erroredCells.length) {
       const isGameWin = sudokuCheck(sudoku);
-      setIsSudokuWon(isGameWin);
 
       if (isGameWin) {
-        // TODO
-        // exibir anuncios
-        // await showInterstitialAd();
-        resetTimer();
+        pauseTimer();
+
+        setTimeout(() => {
+          setIsSudokuWon(isGameWin);
+        }, 1000);
       }
     }
-  }, [erroredCells.length, resetTimer, sudoku]);
+  }, [erroredCells.length, pauseTimer, sudoku]);
 
   useEffect(() => {
     const pauseTimerIfInBackground = async (nextAppState: AppStateStatus) => {
@@ -364,6 +373,14 @@ export const SudokuScreen: React.FC<SudokuScreenRouteProps> = ({ navigation, rou
 
       <Modal visible={isSudokuPaused} animationType="slide">
         <PauseSudokuModal resumeSudokuCallback={handleResumeSudoku} gameDurationUntilNow={durationInSeconds} />
+      </Modal>
+
+      <Modal visible={isSudokuWon} animationType="slide">
+        <FinishSudokuModal
+          gameDuration={durationInSeconds}
+          gameLevel={sudokuLevel}
+          finishGameAndReturnHomeCallback={handleFinishGameAndReturnHome}
+        />
       </Modal>
     </S.Container>
   );
