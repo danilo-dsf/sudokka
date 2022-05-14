@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components/native';
+import styled, { css, DefaultTheme } from 'styled-components/native';
 import { darken } from 'polished';
 import { RFValue } from 'react-native-responsive-fontsize';
 
@@ -16,33 +16,40 @@ interface SudokuCellTextProps {
   isErrored: boolean;
 }
 
-export const SudokuCell = styled.Pressable<SudokuCellProps>`
-  width: ${({ size }) => size}px;
-  height: ${({ size }) => size}px;
+const sudokuCellCss = ({ size, isHovered, isErrored, isSelected }: SudokuCellProps, theme: DefaultTheme) => css`
+  width: ${size}px;
+  height: ${size}px;
   background-color: #ffffff;
   border-width: 1px;
-  border-color: ${({ theme }) => darken(0.2, theme.colors.background)};
+  border-color: ${darken(0.2, theme.colors.background)};
 
-  ${({ isHovered, theme }) =>
-    isHovered &&
-    css`
-      background-color: ${theme.colors.cellHover};
-    `}
+  ${isHovered &&
+  css`
+    background-color: ${theme.colors.cellHover};
+  `}
 
-  ${({ isErrored, theme }) =>
-    isErrored &&
-    css`
-      background-color: ${theme.colors.error};
-    `}
+  ${isErrored &&
+  css`
+    background-color: ${theme.colors.error};
+  `}
 
-  ${({ isSelected, theme }) =>
-    isSelected &&
-    css`
-      background-color: ${theme.colors.info};
-    `}
+  ${isSelected &&
+  css`
+    background-color: ${theme.colors.info};
+  `}
 
   justify-content: center;
   align-items: center;
+`;
+
+export const SudokuCellPressable = styled.Pressable<SudokuCellProps>`
+  ${({ size, isHovered, isErrored, isSelected, theme }) =>
+    sudokuCellCss({ size, isHovered, isErrored, isSelected }, theme)}
+`;
+
+export const SudokuCellView = styled.View<SudokuCellProps>`
+  ${({ size, isHovered, isErrored, isSelected, theme }) =>
+    sudokuCellCss({ size, isHovered, isErrored, isSelected }, theme)}
 `;
 
 export const SudokuCellText = styled.Text<SudokuCellTextProps>`

@@ -14,17 +14,29 @@ interface SudokuCellProps extends PressableProps {
 
 export const SudokuCell: React.FC<SudokuCellProps> = ({
   label,
+  size,
   isEdited,
   isSelected,
   isHovered,
   isErrored,
+  disabled,
   ...rest
 }) => {
+  if (disabled) {
+    return (
+      <S.SudokuCellView isSelected={isSelected} isHovered={isHovered} isErrored={isErrored} size={size}>
+        <S.SudokuCellText isEdited={isEdited} isSelected={isSelected} isHovered={isHovered} isErrored={isErrored}>
+          {label}
+        </S.SudokuCellText>
+      </S.SudokuCellView>
+    );
+  }
+
   return (
-    <S.SudokuCell isSelected={isSelected} isHovered={isHovered} isErrored={isErrored} {...rest}>
+    <S.SudokuCellPressable isSelected={isSelected} isHovered={isHovered} isErrored={isErrored} size={size} {...rest}>
       <S.SudokuCellText isEdited={isEdited} isSelected={isSelected} isHovered={isHovered} isErrored={isErrored}>
         {label}
       </S.SudokuCellText>
-    </S.SudokuCell>
+    </S.SudokuCellPressable>
   );
 };
