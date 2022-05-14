@@ -53,7 +53,7 @@ export const SudokuCellView = styled.View<SudokuCellProps>`
 `;
 
 export const SudokuCellText = styled.Text<SudokuCellTextProps>`
-  font-size: ${RFValue(18)}px;
+  font-size: ${RFValue(24)}px;
   font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.text};
 
