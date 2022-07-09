@@ -1,42 +1,32 @@
-#=================== MVP ===================#
+<h1 align="center">
+  <img src="https://imgur.com/SnZp8Xs.png" />
+</h1>
 
-- sudoku loading feedback ✅
+<h1 align="center">
+  Sudokka
+</h1>
 
-- storage game progress ✅
-	+ sudoku original
-	+ sudoku atual
-	+ tempo
-	+ dificuldade
+<p>
+  Sudokka é um app/game desenvolvido em React Native com JavaScript/TypeScript por Danilo Ferreira (eu) e <strong><a href="https://github.com/diegods-ferreira">Diego Ferreira</a></strong>.
+</p>
 
-- tela de regras do sudoku ✅
+<p>
+  O Sudokka consiste em um jogo divertido de Sudoku com vários níveis de dificuldade (fácil, médio, difícil, muito difícil, insano e inumano) disponíveis para que o usuário possa estar sempre se desafiando.
+</p>
 
-- tela de quando o usuário finaliza o jogo ✅
+<p>
+  Ainda há muito o que fazer para que o projeto esteja completo, no entanto, a versão MVP já está pronta e funcionando corretamente! Basta baixar o código e rodar em seu dispositivo e/ou emulador que poderá se divertir.
+</p>
 
-- anúncios (admob) ✅
-  + OBS: durante desenvolvimento do MVP estamos usando os ids de tests para os anúncios, portanto, antes da publicação, devemos trocar o uso das variáveis ADMOB_BANNER_ID_TEST e ADMOB_INTERSTITIAL_ID_TEST pelas ADMOB_BANNER_ID e ADMOB_INTERSTITIAL_ID respectivamente.
-  + OBS: também é necessário vincular o app à play store no site apps.admob.com
+<h1 align="center">
+  <img src="https://imgur.com/kk4r15o.png" />
+  <img src="https://imgur.com/TbvNJJq.png" />
+</h1>
 
-#===========================================#
+<br>
 
-#================= FUTURO ==================#
+<h3>Espero que goste do projeto!</h3><br>
 
-- estatísticas
-	+ vitórias
-	+ melhor tempo
-	+ não finalizados
-	+ divisão por dificuldade
-	+ geral
+<p>Estamos abertos para sugestões de melhorias e pull requests.</p><br>
 
-- prever se o valor inserido em uma célula não afetará o resto do jogo
-
-- desfazer e refazer ação
-
-- contador de erros
-
-- sistema de anotações
-
-- configurações
-	+ tema da aplicação
-	+ limites de erros por dificuldades
-
-#===========================================#
+<p>Obrigado por visitar esse projeto!</p>
